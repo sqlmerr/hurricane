@@ -7,6 +7,8 @@ from inspect import isclass
 
 from pyrogram import Client
 
+from hurricane.addons.base import Addon
+from hurricane.addons.command import CommandAddon
 from hurricane.database import Database
 from hurricane.types import JSON
 
@@ -18,8 +20,10 @@ class Package:
     developer: str
     version: str | None
 
+    commands: CommandAddon
     client: Client
     db: Database
+    addons: list[Addon]
 
     async def on_load(self):
         logger.info(f"Package loaded: {self.developer} {self.version}")
@@ -38,7 +42,7 @@ class PackageLoader:
     def __init__(self, client: Client, db: Database) -> None:
         self._client = client
         self._db = db
-        self.packages = {}
+        self.packages: dict[str, Package] = {}
 
     async def load(self, package_dir: os.PathLike = "hurricane/packages") -> None:
         packages = os.listdir(package_dir)
@@ -67,6 +71,10 @@ class PackageLoader:
                 value.name = value.name or name
                 value.client = self._client
                 value.db = self._db
+
+                command_addon = CommandAddon(self._client, name)
+                value.addons = [command_addon]
+                value.commands = command_addon
 
                 instance = value()
 

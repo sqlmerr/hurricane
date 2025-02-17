@@ -9,7 +9,7 @@ from pyrogram.qrlogin import QRLogin
 from datetime import datetime
 from getpass import getpass
 
-from pyrogram import Client, enums
+from pyrogram import Client, enums, raw
 from pyrogram.types import User
 from qrcode.main import QRCode
 
@@ -23,13 +23,14 @@ def colored_input(prompt: str = "", hide: bool = False) -> str:
         )
     )
 
+
 YES = ["yes", "y", "д", "да"]
 logger = logging.getLogger(__name__)
 
 
 class Auth:
     def __init__(self) -> None:
-        self.client = Client(name="hurricane")
+        self.client = Client(name="hurricane", parse_mode=enums.ParseMode.HTML)
         self.phone_number = None
         self.password = None
 
@@ -108,17 +109,21 @@ class Auth:
             enums.SentCodeType.CALL: "phone call",
             enums.SentCodeType.FLASH_CALL: "phone flash call",
             enums.SentCodeType.FRAGMENT_SMS: "Fragment SMS",
-            enums.SentCodeType.EMAIL_CODE: "email code"
+            enums.SentCodeType.EMAIL_CODE: "email code",
         }
 
-        print(f"The confirmation code has been sent via {sent_code_descriptions[sent_code.type]}")
+        print(
+            f"The confirmation code has been sent via {sent_code_descriptions[sent_code.type]}"
+        )
 
         while True:
             if not self.phone_code:
                 self.phone_code = colored_input("Enter confirmation code: ")
 
             try:
-                signed_in = await self.client.sign_in(self.phone_number, sent_code.phone_code_hash, self.phone_code)
+                signed_in = await self.client.sign_in(
+                    self.phone_number, sent_code.phone_code_hash, self.phone_code
+                )
             except BadRequest as e:
                 print(e.MESSAGE)
                 self.phone_code = None
@@ -126,10 +131,16 @@ class Auth:
                 print(e.MESSAGE)
 
                 while True:
-                    print("Password hint: {}".format(await self.client.get_password_hint()))
+                    print(
+                        "Password hint: {}".format(
+                            await self.client.get_password_hint()
+                        )
+                    )
 
                     if not self.password:
-                        self.password = colored_input("Enter password (empty to recover): ", hide=True)
+                        self.password = colored_input(
+                            "Enter password (empty to recover): ", hide=True
+                        )
 
                     try:
                         if not self.password:
@@ -137,13 +148,19 @@ class Auth:
 
                             if confirm in YES:
                                 email_pattern = await self.client.send_recovery_code()
-                                print(f"The recovery code has been sent to {email_pattern}")
+                                print(
+                                    f"The recovery code has been sent to {email_pattern}"
+                                )
 
                                 while True:
-                                    recovery_code = colored_input("Enter recovery code: ")
+                                    recovery_code = colored_input(
+                                        "Enter recovery code: "
+                                    )
 
                                     try:
-                                        return await self.client.recover_password(recovery_code)
+                                        return await self.client.recover_password(
+                                            recovery_code
+                                        )
                                     except Exception as e:
                                         logger.exception(e)
                                         raise
@@ -157,8 +174,8 @@ class Auth:
             else:
                 break
 
-
     async def authorize(self) -> Client:
+        # Client.start()
         self._load_credentials()
 
         is_authorized = await self.client.connect()
@@ -168,11 +185,13 @@ class Auth:
                     await self._auth_qr()
                 else:
                     await self.authorize()
+
+            await self.client.invoke(raw.functions.updates.GetState())
         except (Exception, KeyboardInterrupt):
             await self.client.disconnect()
             raise
         else:
+            self.client.me = await self.client.get_me()
             await self.client.initialize()
 
             return self.client
-
