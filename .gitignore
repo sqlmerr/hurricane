@@ -1,0 +1,9 @@
+.env
+hurricane.session
+.venv
+__pycache__
+.idea
+.vscode
+
+config.json
+database.json

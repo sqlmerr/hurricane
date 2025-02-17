@@ -1,0 +1,16 @@
+[project]
+name = "hurricane"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "aiogram>=3.18.0",
+    "kurigram>=2.1.39",
+    "qrcode>=8.0",
+    "tgcrypto>=1.2.5",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.6",
+]
