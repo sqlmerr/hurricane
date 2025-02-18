@@ -1,3 +1,3 @@
-from . import command, base
+from . import base, command, translate
 
-__all__ = ("command", "base")
+__all__ = ("base", "command", "translate")
