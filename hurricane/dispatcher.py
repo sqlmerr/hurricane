@@ -3,7 +3,7 @@ from pyrogram.handlers import MessageHandler
 from pyrogram.types import Message
 
 from hurricane.addons.command import CommandAddon
-from hurricane.pkgloader import PackageLoader
+from hurricane.modloader import ModuleLoader
 
 
 async def message_filters(app: Client, message: Message) -> bool:
@@ -14,7 +14,7 @@ async def message_filters(app: Client, message: Message) -> bool:
 
 
 class Dispatcher:
-    def __init__(self, client: Client, loader: PackageLoader):
+    def __init__(self, client: Client, loader: ModuleLoader):
         self.client = client
         self.loader = loader
 
@@ -23,9 +23,11 @@ class Dispatcher:
             return
 
         prefix = self.loader._db.get("settings", "prefix", ".")
+        if message.text and not message.text.lower().strip().startswith(prefix):
+            return
         _, command = message.text.split(prefix, 1)
 
-        for name, pkg in self.loader.packages.items():
+        for name, pkg in self.loader.modules.items():
             addon = [a for a in pkg.addons if isinstance(a, CommandAddon)]
             if not addon:
                 continue

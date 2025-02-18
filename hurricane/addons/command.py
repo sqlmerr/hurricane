@@ -6,8 +6,8 @@ from pyrogram.types import Message
 from hurricane.addons.base import Addon
 
 
-def simple_command(command: str, func: "CommandFunc", *, is_global: bool = False):
-    return Command(command, is_global=is_global, func=func)
+def simple_command(command: str, func: "CommandFunc", *, is_global: bool = False, aliases: list[str] | None = None) -> "Command":
+    return Command(command, is_global=is_global, func=func, aliases=aliases or [])
 
 
 class CommandContext:
@@ -28,8 +28,10 @@ CommandFunc = Callable[[Message, CommandContext], Awaitable[None]]
 
 
 class Command:
-    def __init__(self, cmd: str, is_global: bool, func: CommandFunc) -> None:
+    def __init__(self, cmd: str, is_global: bool, func: CommandFunc, aliases: list[str]) -> None:
         self.cmd = cmd
+        self.is_global = is_global
+        self.aliases = aliases
         self.func = func
 
     async def __call__(self, message: Message, context: CommandContext) -> None:
@@ -54,11 +56,11 @@ class CommandAddon(Addon):
     def _find_command(self, cmd: str, is_global: bool) -> Command | None:
         if is_global:
             for k, v in self._global_commands.items():
-                if k == cmd:
+                if (k == cmd or cmd in v.aliases) and v.is_global:
                     return v
         else:
             for k, v in self._commands.items():
-                if k == cmd:
+                if k == cmd or cmd in v.aliases:
                     return v
 
     def register(self, *cmds: Command) -> None:

@@ -40,8 +40,8 @@ class Auth:
         else:
             with open("config.json") as f:
                 data = json.load(f)
-                api_id = data.get("api_id")
-                api_hash = data.get("api_hash")
+        api_id = data.get("api_id")
+        api_hash = data.get("api_hash")
 
         if not api_id:
             api_id = int(colored_input("Enter api id: "))

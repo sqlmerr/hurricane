@@ -8,7 +8,7 @@ from pyrogram import Client, idle, filters
 from hurricane.auth import Auth
 from hurricane.database import Database
 from hurricane.dispatcher import Dispatcher
-from hurricane.pkgloader import PackageLoader
+from hurricane.modloader import ModuleLoader
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
@@ -26,7 +26,7 @@ async def main():
     print(logo)
 
     database = Database(BASE_PATH / "database.json")
-    loader = PackageLoader(client, database)
+    loader = ModuleLoader(client, database)
     await loader.load()
 
     dp = Dispatcher(client, loader)

@@ -5,5 +5,6 @@ __pycache__
 .idea
 .vscode
 
+hurricane/loaded_modules
 config.json
 database.json
