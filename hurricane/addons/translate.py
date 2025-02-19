@@ -14,7 +14,7 @@ class TranslateAddon(Addon):
             "en": en,
         }
 
-    def __call__(self, key: str) -> str:
+    def __call__(self, key: str, *args, **kwargs) -> str:
         lang = self.mod.db.get("settings", "lang", "en")
         t = self.translations[lang].get(key)
         en = self.translations["en"].get(key)
@@ -22,4 +22,10 @@ class TranslateAddon(Addon):
             return "Undefined"
         if t is None and en is not None:
             return en
-        return t
+        return t.format(*args, **kwargs)
+
+    def __getattr__(self, item: str):
+        def wrapper(*args, **kwargs) -> str:
+            return self(item, *args, **kwargs)
+
+        return wrapper

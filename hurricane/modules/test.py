@@ -26,7 +26,7 @@ class TestMod(hurricane.Module):
 
     async def ping_command(self, message: Message, context: CommandContext) -> None:
         start = time.perf_counter()
-        await message.edit(self.t("ping_txt").format(""))
+        await message.edit(self.t.ping_txt(""))
         end = time.perf_counter()
 
-        await message.edit(self.t("ping_txt").format(round(end - start, 2)))
+        await message.edit(self.t.ping_txt(round(end - start, 2)))
