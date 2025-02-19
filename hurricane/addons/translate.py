@@ -3,6 +3,7 @@ from hurricane.addons.base import Addon
 
 
 Translation = dict[str, str]
+SUPPORTED_LANGUAGES = ["ru", "en"]
 
 class TranslateAddon(Addon):
     def __init__(self, mod: Module, ru: Translation, en: Translation) -> None:
