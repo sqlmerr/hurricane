@@ -17,9 +17,8 @@ from hurricane.types import JSON
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODS = [
-    "loader", "test", "eval"
-]
+DEFAULT_MODS = ["loader", "test", "eval", "settings", "help"]
+
 
 class Module:
     name: str
@@ -89,12 +88,16 @@ class ModuleLoader:
         for external_mod in filter(
             lambda p: p.endswith(".py") and p != "__init__.py", external_modules
         ):
-            module_path = os.path.join(os.path.abspath("."), external_module_dir, external_mod)
+            module_path = os.path.join(
+                os.path.abspath("."), external_module_dir, external_mod
+            )
             module_name = external_mod[:-3]
 
             mod = await self.load_module(module_name, module_path)
 
-    def load_instance(self, name: str, path: str = "", spec: ModuleSpec | None = None) -> Module:
+    def load_instance(
+        self, name: str, path: str = "", spec: ModuleSpec | None = None
+    ) -> Module:
         spec = spec or spec_from_file_location(name, path)
         module = module_from_spec(spec)
         sys.modules[name] = module
@@ -130,7 +133,9 @@ class ModuleLoader:
 
         return instance
 
-    async def load_third_party_module(self, source: str, origin: str = "<string>") -> str | None:
+    async def load_third_party_module(
+        self, source: str, origin: str = "<string>"
+    ) -> str | None:
         name = f"hurricane.modules.{random.randint(1, 99999)}"
         try:
             spec = ModuleSpec(name, origin=origin, loader=StringLoader(source, origin))
@@ -158,5 +163,10 @@ class ModuleLoader:
         os.remove(os.path.join(".", "hurricane/loaded_modules", f"{module_name}.py"))
 
     def find_module(self, query: str) -> Module | None:
-        fltr = list(filter(lambda p: p.name.lower().strip() == query.lower().strip(), self.modules.values()))
+        fltr = list(
+            filter(
+                lambda p: p.name.lower().strip() == query.lower().strip(),
+                self.modules.values(),
+            )
+        )
         return fltr[0] if len(fltr) > 0 else None

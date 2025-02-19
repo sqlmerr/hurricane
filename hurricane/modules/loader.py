@@ -14,9 +14,10 @@ class Loader(hurricane.Module):
     async def on_load(self):
         self.commands.register(
             simple_command("loadmod", self.load_module, is_global=True, aliases=["lm"]),
-            simple_command("unloadmod", self.unload_module, is_global=True, aliases=["ulm"]),
+            simple_command(
+                "unloadmod", self.unload_module, is_global=True, aliases=["ulm"]
+            ),
         )
-
 
     async def load_module(self, message: Message, context: CommandContext) -> None:
         reply = message.reply_to_message

@@ -32,8 +32,9 @@ class Eval(hurricane.Module):
                     "<pre><code language='python'>{}</code></pre>\n\n"
                     "❌ <b>Ошибка:</b>\n"
                     "<pre><code language='python'>{}</code></pre>\n"
-                )
-            }, en={
+                ),
+            },
+            en={
                 "eval_text": (
                     "💻 <b>Code:</b>\n"
                     "<pre><code language='python'>{}</code></pre>\n\n"
@@ -47,8 +48,8 @@ class Eval(hurricane.Module):
                     "<pre><code language='python'>{}</code></pre>\n\n"
                     "❌ <b>Error:</b>\n"
                     "<pre><code language='python'>{}</code></pre>\n"
-                )
-            }
+                ),
+            },
         )
         self.commands.register(
             simple_command("eval", self.eval_cmd, is_global=True, aliases=["e"])
@@ -65,7 +66,7 @@ class Eval(hurricane.Module):
             "self": self,
             "client": self.client,
             "c": self.client,
-            "db": self.db
+            "db": self.db,
         }
 
         try:
@@ -77,7 +78,6 @@ class Eval(hurricane.Module):
         except Exception as e:
             await message.edit(self.t("error").format(code, e))
             return
-
 
         text = self.t("eval_text").format(
             code,

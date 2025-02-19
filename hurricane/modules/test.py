@@ -14,11 +14,9 @@ class TestMod(hurricane.Module):
 
     def __init__(self):
         self.t = TranslateAddon(
-            self, ru={
-                "ping_txt": "🏓 <b>Понг! {}</b>"
-            }, en={
-                "ping_txt": "🏓 <b>Pong! {}</b>"
-            }
+            self,
+            ru={"ping_txt": "🏓 <b>Понг! {}</b>"},
+            en={"ping_txt": "🏓 <b>Pong! {}</b>"},
         )
 
     async def on_load(self):

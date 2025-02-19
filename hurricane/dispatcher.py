@@ -23,19 +23,22 @@ class Dispatcher:
             return
 
         prefix = self.loader._db.get("settings", "prefix", ".")
-        if message.text and not message.text.lower().strip().startswith(prefix):
+        if not message.text or (
+            message.text and not message.text.lower().strip().startswith(prefix)
+        ):
             return
         _, command = message.text.split(prefix, 1)
 
-        for name, pkg in self.loader.modules.items():
-            addon = [a for a in pkg.addons if isinstance(a, CommandAddon)]
+        for name, mod in self.loader.modules.items():
+            addon = mod.commands
             if not addon:
                 continue
-            addon = addon[0]
             status = await addon.handle_command(command, message)
             if status:
                 break
 
     async def load(self) -> None:
         self.client.add_handler(MessageHandler(self._message_handler, filters.all))
-        self.client.add_handler(EditedMessageHandler(self._message_handler, filters.all))
+        self.client.add_handler(
+            EditedMessageHandler(self._message_handler, filters.all)
+        )
