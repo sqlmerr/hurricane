@@ -18,7 +18,7 @@ from hurricane.types import JSON
 logger = logging.getLogger(__name__)
 
 DEFAULT_MODS = [
-    "loader", "test"
+    "loader", "test", "eval"
 ]
 
 class Module:
@@ -33,7 +33,7 @@ class Module:
     addons: list[Addon]
 
     async def on_load(self):
-        logger.info(f"Module loaded: {self.developer} {self.version}")
+        pass
 
     def get(self, key: str, default: JSON = None) -> JSON:
         return self.db.get(self.name, key, default)

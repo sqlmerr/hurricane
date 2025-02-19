@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.handlers import MessageHandler
+from pyrogram.handlers import MessageHandler, EditedMessageHandler
 from pyrogram.types import Message
 
 from hurricane.addons.command import CommandAddon
@@ -38,3 +38,4 @@ class Dispatcher:
 
     async def load(self) -> None:
         self.client.add_handler(MessageHandler(self._message_handler, filters.all))
+        self.client.add_handler(EditedMessageHandler(self._message_handler, filters.all))

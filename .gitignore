@@ -1,5 +1,5 @@
 .env
-hurricane.session
+*.session*
 .venv
 __pycache__
 .idea
