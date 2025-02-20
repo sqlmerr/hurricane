@@ -12,7 +12,13 @@ class AssetManager:
         self._chat: Chat | None = None
 
     async def load(self):
-        self._chat = await utils.create_asset_chat(self._client, self._loader, "hurricane-assets", "Your personal assets will be stored here!", archive=True)
+        self._chat = await utils.create_asset_chat(
+            self._client,
+            self._loader,
+            "hurricane-assets",
+            "Your personal assets will be stored here!",
+            archive=True,
+        )
 
         for mod in self._loader.modules.values():
             mod.assets = self

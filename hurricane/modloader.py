@@ -57,8 +57,16 @@ class Module:
         archive: bool = False,
         avatar: str | None = None,
     ):
-        return create_asset_chat(self.client, self.loader, title=title, desc=desc, supergroup=supergroup, invite_bot=invite_bot, archive=archive, avatar=avatar)
-
+        return create_asset_chat(
+            self.client,
+            self.loader,
+            title=title,
+            desc=desc,
+            supergroup=supergroup,
+            invite_bot=invite_bot,
+            archive=archive,
+            avatar=avatar,
+        )
 
 
 class StringLoader(SourceLoader):

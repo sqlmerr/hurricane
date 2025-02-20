@@ -1,5 +1,6 @@
 import asyncio
 import random
+import string
 
 from pyrogram import Client
 from pyrogram.enums import ChatType
@@ -23,7 +24,9 @@ async def create_asset_chat(
     avatar: str | None = None,
 ) -> Chat:
     async for dialog in client.get_dialogs():
-        if dialog.chat.title == title and dialog.chat.type == (ChatType.SUPERGROUP if supergroup else ChatType.GROUP):
+        if dialog.chat.title == title and dialog.chat.type == (
+            ChatType.SUPERGROUP if supergroup else ChatType.GROUP
+        ):
             return dialog.chat
 
     await fw_protect()
@@ -49,3 +52,9 @@ async def create_asset_chat(
         await client.set_chat_photo(chat.id, photo=avatar)
 
     return chat
+
+
+def random_identifier(size: int = 10) -> str:
+    return "".join(
+        random.choice(string.ascii_letters + string.digits) for _ in range(size)
+    )

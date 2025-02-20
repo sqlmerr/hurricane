@@ -21,12 +21,15 @@ class TestMod(hurricane.Module):
 
     async def on_load(self):
         self.commands.register(
-            simple_command("ping", self.ping_command, is_global=True)
+            simple_command("ping", self.ping_command, is_global=True),
+            simple_command("crash", self.crash_cmd),
         )
+
+    async def crash_cmd(self, _, __) -> None:
+        result = 1 / 0
 
     async def ping_command(self, message: Message, context: CommandContext) -> None:
         start = time.perf_counter()
         await message.edit(self.t.ping_txt(""))
         end = time.perf_counter()
-
         await message.edit(self.t.ping_txt(round(end - start / 10**6, 3)))

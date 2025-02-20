@@ -1,3 +1,4 @@
+import logging
 from typing import Callable, Awaitable
 
 from pyrogram import Client
@@ -111,6 +112,9 @@ class CommandAddon(Addon):
         if not cmd:
             return False
         context = CommandContext(command=cmd, args=args)
-        await cmd(message, context)
+        try:
+            await cmd(message, context)
+        except Exception as e:
+            logging.exception(e)
 
         return True
