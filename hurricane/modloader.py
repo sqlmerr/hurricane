@@ -13,7 +13,10 @@ from pyrogram import Client
 from hurricane.addons.base import Addon
 from hurricane.addons.command import CommandAddon
 from hurricane.database import Database
+from hurricane.database.assets import AssetManager
+from hurricane.inline.base import InlineManager
 from hurricane.types import JSON
+from hurricane.utils import create_asset_chat
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +32,8 @@ class Module:
     client: Client
     db: Database
     loader: "ModuleLoader"
+    inline: InlineManager
+    assets: AssetManager
     addons: list[Addon]
 
     async def on_load(self):
@@ -42,6 +47,18 @@ class Module:
 
     def pop(self, key: str) -> None:
         return self.db.pop(self.name, key)
+
+    async def create_asset_chat(
+        self,
+        title: str,
+        desc: str = "",
+        supergroup: bool = False,
+        invite_bot: bool = False,
+        archive: bool = False,
+        avatar: str | None = None,
+    ):
+        return create_asset_chat(self.client, self.loader, title=title, desc=desc, supergroup=supergroup, invite_bot=invite_bot, archive=archive, avatar=avatar)
+
 
 
 class StringLoader(SourceLoader):
@@ -64,9 +81,10 @@ class StringLoader(SourceLoader):
 
 
 class ModuleLoader:
-    def __init__(self, client: Client, db: Database) -> None:
+    def __init__(self, client: Client, db: Database, inline: InlineManager) -> None:
         self._client = client
         self._db = db
+        self.inline = inline
         self.modules: dict[str, Module] = {}
 
     async def load(self) -> None:
@@ -97,13 +115,11 @@ class ModuleLoader:
 
     def load_instance(
         self, name: str, path: str = "", spec: ModuleSpec | None = None
-    ) -> Module:
+    ) -> Module | None:
         spec = spec or spec_from_file_location(name, path)
         module = module_from_spec(spec)
         sys.modules[name] = module
         spec.loader.exec_module(module)
-
-        instance = None
 
         for key, value in vars(module).items():
             if isclass(value) and issubclass(value, Module):
@@ -111,8 +127,9 @@ class ModuleLoader:
                 value.client = self._client
                 value.db = self._db
                 value.loader = self
+                value.inline = self.inline
 
-                command_addon = CommandAddon(self._client, name)
+                command_addon = CommandAddon(self._client, value.name)
                 value.addons = [command_addon]
                 value.commands = command_addon
 

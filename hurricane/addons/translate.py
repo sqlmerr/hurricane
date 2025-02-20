@@ -22,7 +22,7 @@ class TranslateAddon(Addon):
             return "Undefined"
         if t is None and en is not None:
             return en
-        return t.format(*args, **kwargs)
+        return t.format(*args, **kwargs) if args or kwargs else t
 
     def __getattr__(self, item: str):
         def wrapper(*args, **kwargs) -> str:

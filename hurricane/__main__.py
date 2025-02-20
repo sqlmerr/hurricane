@@ -7,7 +7,9 @@ from pyrogram import Client, idle, filters
 
 from hurricane.auth import Auth
 from hurricane.database import Database
+from hurricane.database.assets import AssetManager
 from hurricane.dispatcher import Dispatcher
+from hurricane.inline.base import InlineManager
 from hurricane.modloader import ModuleLoader
 
 logging.basicConfig(level=logging.INFO)
@@ -26,9 +28,13 @@ async def main():
     print(logo)
 
     database = Database(BASE_PATH / "database.json")
-    loader = ModuleLoader(client, database)
+    inline = InlineManager(database)
+    loader = ModuleLoader(client, database, inline)
+
     await loader.load()
 
+    asset_manager = AssetManager(loader, client)
+    await asset_manager.load()
     dp = Dispatcher(client, loader)
     await dp.load()
 

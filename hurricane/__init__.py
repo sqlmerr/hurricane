@@ -3,7 +3,7 @@ from git import Repo
 from hurricane import modloader, types
 from hurricane.modloader import Module
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 __authors__ = ["sqlmerr"]
 __license__ = "MIT"
 

@@ -29,4 +29,4 @@ class TestMod(hurricane.Module):
         await message.edit(self.t.ping_txt(""))
         end = time.perf_counter()
 
-        await message.edit(self.t.ping_txt(round(end - start, 2)))
+        await message.edit(self.t.ping_txt(round(end - start / 10**6, 3)))
