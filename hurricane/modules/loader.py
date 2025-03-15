@@ -3,7 +3,7 @@ import tempfile
 from pyrogram.types import Message
 
 import hurricane
-from hurricane.addons.command import CommandContext, simple_command
+from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 
 
 class Loader(hurricane.Module):
@@ -12,7 +12,8 @@ class Loader(hurricane.Module):
     version = hurricane.__version__
 
     async def on_load(self):
-        self.commands.register(
+        self.c = CommandAddon(self)
+        self.c.register(
             simple_command("loadmod", self.load_module, is_global=True, aliases=["lm"]),
             simple_command(
                 "unloadmod", self.unload_module, is_global=True, aliases=["ulm"]

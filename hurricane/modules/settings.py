@@ -1,7 +1,7 @@
 from pyrogram.types import Message
 
 import hurricane
-from hurricane.addons.command import CommandContext, simple_command
+from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 from hurricane.addons.translate import SUPPORTED_LANGUAGES, TranslateAddon
 
 
@@ -24,7 +24,9 @@ class Settings(hurricane.Module):
                 "set_lang_text": "<emoji id='5260463209562776385'>✅</emoji> <b>Язык успешно изменен!</b>",
             },
         )
-        self.commands.register(
+
+        self.c = CommandAddon(self)
+        self.c.register(
             simple_command(
                 "lang", self.set_lang_cmd, is_global=True, aliases=["set_lang"]
             )

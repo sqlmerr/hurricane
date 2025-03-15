@@ -22,7 +22,7 @@ from hurricane.types import ReplyMarkup
 
 class FormAddon(Addon):
     def __init__(self, mod: "hurricane.Module") -> None:
-        self.mod = mod
+        super().__init__(mod)
         self._forms: dict[str, dict[str, Any]] = {}
         self._callback_map: dict[str, dict[str, Any]] = {}
 

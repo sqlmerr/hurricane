@@ -1,4 +1,4 @@
-from hurricane import Module
+import hurricane
 from hurricane.addons.base import Addon
 
 
@@ -7,11 +7,11 @@ SUPPORTED_LANGUAGES = ["ru", "en"]
 
 
 class TranslateAddon(Addon):
-    def __init__(self, mod: Module, en: Translation, ru: Translation) -> None:
-        self.mod = mod
+    def __init__(self, mod: "hurricane.Module", en: Translation | None = None, ru: Translation | None = None) -> None:
+        super().__init__(mod)
         self.translations = {
-            "ru": ru,
-            "en": en,
+            "ru": ru if ru else {},
+            "en": en if en else {},
         }
 
     def __call__(self, key: str, *args, **kwargs) -> str:

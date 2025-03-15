@@ -30,7 +30,7 @@ class Dispatcher:
         _, command = message.text.split(prefix, 1)
 
         for name, mod in self.loader.modules.items():
-            addon = mod.commands
+            addon = mod.find_addon(CommandAddon)
             if not addon:
                 continue
             status = await addon.handle_command(command, message)

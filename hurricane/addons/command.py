@@ -4,6 +4,7 @@ from typing import Callable, Awaitable
 from pyrogram import Client
 from pyrogram.types import Message
 
+import hurricane
 from hurricane.addons.base import Addon
 
 
@@ -65,9 +66,9 @@ class Command:
 
 
 class CommandAddon(Addon):
-    def __init__(self, client: Client, package_name: str):
-        self.client = client
-        self.package_name = package_name
+    def __init__(self, mod: "hurricane.Module"):
+        super().__init__(mod)
+        self.client = mod.client
         self._global_commands: dict[str, Command] = {}
         self._commands: dict[str, Command] = {}
 
@@ -103,7 +104,7 @@ class CommandAddon(Addon):
         if len(splitted_cmd) == 2:
             is_global = False
             command = splitted_cmd[1]
-            if splitted_cmd[0] != self.package_name:
+            if splitted_cmd[0] != self.mod.name:
                 return False
         else:
             is_global = True

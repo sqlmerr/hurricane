@@ -6,7 +6,7 @@ import meval
 from pyrogram.types import Message
 
 import hurricane
-from hurricane.addons.command import CommandContext, simple_command
+from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 from hurricane.addons.translate import TranslateAddon
 
 
@@ -51,7 +51,8 @@ class Eval(hurricane.Module):
                 ),
             },
         )
-        self.commands.register(
+        self.c = CommandAddon(self)
+        self.c.register(
             simple_command("eval", self.eval_cmd, is_global=True, aliases=["e"])
         )
 

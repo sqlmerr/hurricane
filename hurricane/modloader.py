@@ -6,7 +6,7 @@ from importlib.abc import SourceLoader
 from importlib.util import spec_from_file_location, module_from_spec
 from importlib.machinery import ModuleSpec
 from inspect import isclass
-from typing import Any, Type
+from typing import Any, Type, TypeVar
 
 from pyrogram import Client
 
@@ -22,13 +22,13 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MODS = ["loader", "test", "eval", "settings", "help"]
 
+T = TypeVar("T", bound=Addon)
+
 
 class Module:
     name: str
     developer: str
     version: str | None
-
-    commands: CommandAddon
 
     client: Client
     db: Database
@@ -39,6 +39,11 @@ class Module:
 
     async def on_load(self):
         pass
+
+    def find_addon(self, addon: type[T]) -> T | None:
+        for instance in self.addons:
+            if isinstance(instance, addon):
+                return instance
 
     def get(self, key: str, default: JSON = None) -> JSON:
         return self.db.get(self.name, key, default)
@@ -138,9 +143,7 @@ class ModuleLoader:
                 value.loader = self
                 value.inline = self.inline
 
-                command_addon = CommandAddon(self._client, value.name)
-                value.addons = [command_addon]
-                value.commands = command_addon
+                value.addons = []
 
                 instance = value()
 

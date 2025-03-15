@@ -5,7 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from pyrogram.types import Message
 
 import hurricane
-from hurricane.addons.command import simple_command, CommandContext
+from hurricane.addons.command import simple_command, CommandContext, CommandAddon
 from hurricane.addons.inline.components import Text, UrlButton, ClickableButton, Builder
 from hurricane.addons.inline.form import FormAddon
 from hurricane.addons.translate import TranslateAddon
@@ -34,7 +34,8 @@ class TestMod(hurricane.Module):
             en={"ping_txt": "🏓 <b>Pong! {}</b>"},
         )
 
-        self.commands.register(
+        self.c = CommandAddon(self)
+        self.c.register(
             simple_command("ping", self.ping_command, is_global=True),
             simple_command("crash", self.crash_cmd),
             simple_command("inline", self.inline_menu_cmd),

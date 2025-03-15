@@ -3,7 +3,7 @@ import html
 from pyrogram.types import Message
 
 import hurricane
-from hurricane.addons.command import CommandContext, simple_command
+from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 from hurricane.addons.translate import TranslateAddon
 
 
@@ -38,14 +38,17 @@ class Help(hurricane.Module):
                 ),
             },
         )
-        self.commands.register(simple_command("help", self.help_cmd, is_global=True))
+        self.c = CommandAddon(self)
+        self.c.register(simple_command("help", self.help_cmd, is_global=True))
 
     def help_menu(self, modules: dict[str, hurricane.Module]) -> str:
         content = []
         for n, m in modules.items():
+            if not (command_addon := m.find_addon(CommandAddon)):
+                continue
             commands = " | ".join(
                 f"{'🌐' if c.is_global else ''} {k}"
-                for k, c in m.commands.commands.items()
+                for k, c in command_addon.commands.items()
             )
             content.append(f"🔸 <code>{n}</code> ({commands})")
         content = "\n".join(content)
@@ -66,7 +69,11 @@ class Help(hurricane.Module):
         if module is None:
             await message.edit(self.t("404"))
             return
-        commands = list(module.commands.commands.values())
+        addon = module.find_addon(CommandAddon)
+        if addon is None:
+            await message.edit(self.t("404"))
+            return
+        commands = list(addon.commands.values())
         c = []
         for cmd in commands:
             aliases = ", ".join(cmd.aliases)
