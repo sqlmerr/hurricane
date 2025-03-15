@@ -13,13 +13,14 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from pyrogram import Client
-from pyrogram.types import Message
+from pyrogram.types import Message, User
 
 import hurricane
 from hurricane import utils
 from hurricane.addons.base import Addon
 from hurricane.inline.custom import HurricaneCallbackQuery
 from hurricane.inline.units import Unit
+from hurricane.security.rules import BaseRule, Me
 from hurricane.types import ReplyMarkup
 
 
@@ -56,6 +57,12 @@ class FormAddon(Addon):
         unit_id = callback["unit_id"]
         args = callback.get("args", ())
         kwargs = callback.get("kwargs", {})
+
+        form = self._forms[unit_id]
+        rules = form.get("rules")
+        if not self.__check_rules(rules, call.from_user):
+            await call.answer("You are not allowed to do this!")
+            return
 
         query = HurricaneCallbackQuery(call, self.mod.inline)
         func_args = inspect.getfullargspec(handler)[0]
@@ -128,7 +135,13 @@ class FormAddon(Addon):
 
         return builder.as_markup()
 
-    async def new(self, message: Message, text: str, reply_markup: ReplyMarkup) -> str:
+    def __check_rules(self, rules: list[BaseRule], user: User) -> bool:
+        if not rules:
+            return False
+
+        return all([rule.check(user, self.mod.client) for rule in rules])
+
+    async def new(self, message: Message, text: str, reply_markup: ReplyMarkup, *, rules: list[BaseRule] | None = None) -> str:
         uid = utils.random_identifier(16)
         self.mod.inline.add_unit(
             Unit(
@@ -142,6 +155,7 @@ class FormAddon(Addon):
             "text": text,
             "reply_markup": reply_markup,
             "message": message,
+            "rules": rules if rules else [Me()]
         }
 
         await message.edit("💥")

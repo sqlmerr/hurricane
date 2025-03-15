@@ -100,7 +100,7 @@ class Builder:
 
         return buttons
 
-    async def build(self, message: Message, form: FormAddon) -> str:
+    async def build(self, message: Message, form: FormAddon, **kwargs) -> str:
         text = self.text()
         reply_markup = self.markup()
-        return await form.new(message, text, reply_markup)
+        return await form.new(message, text, reply_markup, **kwargs)

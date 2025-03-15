@@ -12,11 +12,12 @@ from hurricane.addons.inline.form import FormAddon
 from hurricane.addons.inline.menu import BaseMenu
 from hurricane.addons.translate import TranslateAddon
 from hurricane.inline.custom import HurricaneCallbackQuery
+from hurricane.security.rules import In
 
 
 class TestMenu(BaseMenu):
     def __init__(self, form: FormAddon, count: int = 0):
-        super().__init__(form)
+        super().__init__(form, rules=[In(1341947575)])
         self.count = count
 
     async def increment(self, call: HurricaneCallbackQuery):
