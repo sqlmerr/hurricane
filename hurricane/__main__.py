@@ -3,7 +3,7 @@ import logging
 import os
 from pathlib import Path
 
-from pyrogram import Client, idle, filters
+from pyrogram import Client, idle
 from pyrogram.types import Chat
 
 from hurricane import utils
@@ -48,7 +48,7 @@ async def main():
     await inline.load(t if t else await inline.obtain_token())
 
     loader = ModuleLoader(client, database, inline)
-
+    client.loader = loader
     await loader.load()
 
     asset_manager = AssetManager(loader, client)

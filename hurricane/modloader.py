@@ -6,7 +6,7 @@ from importlib.abc import SourceLoader
 from importlib.util import spec_from_file_location, module_from_spec
 from importlib.machinery import ModuleSpec
 from inspect import isclass
-from typing import Any
+from typing import Any, Type
 
 from pyrogram import Client
 
@@ -29,6 +29,7 @@ class Module:
     version: str | None
 
     commands: CommandAddon
+
     client: Client
     db: Database
     loader: "ModuleLoader"
