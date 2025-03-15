@@ -40,6 +40,7 @@ class Text(TextComponent):
     def _render_text(self) -> str:
         return self.text
 
+
 class ClickableButton(ButtonComponent):
     def __init__(self, text: str, on_click: Any, *args, **kwargs):
         self.text = text
@@ -49,7 +50,13 @@ class ClickableButton(ButtonComponent):
         super().__init__()
 
     def _render_button(self) -> dict:
-        return {"text": self.text, "callback": self.on_click, "args": self.args, "kwargs": self.kwargs}
+        return {
+            "text": self.text,
+            "callback": self.on_click,
+            "args": self.args,
+            "kwargs": self.kwargs,
+        }
+
 
 class UrlButton(ButtonComponent):
     def __init__(self, text: str, url: str):
@@ -60,6 +67,7 @@ class UrlButton(ButtonComponent):
     def _render_button(self) -> dict:
         return {"text": self.text, "url": self.url}
 
+
 class RawButton(ButtonComponent):
     def __init__(self, data: dict[str, Any]):
         self.data = data
@@ -68,30 +76,31 @@ class RawButton(ButtonComponent):
     def _render_button(self) -> dict:
         return self.data
 
+
 class Builder:
-    def __init__(self, components: list[TextComponent | ButtonComponent]) -> None:
+    def __init__(self, *components: TextComponent | ButtonComponent) -> None:
         self._components = components
 
-    def _text(self) -> str:
-        text = "\n".join([component.render_text() for component in self._components if isinstance(component, TextComponent)])
-        for component in self._components:
-            print("c: ", component.name)
+    def text(self) -> str:
+        text = "\n".join(
+            [
+                component.render_text()
+                for component in self._components
+                if isinstance(component, TextComponent)
+            ]
+        )
 
         return text
 
-
-    def _markup(self) -> ReplyMarkup:
+    def markup(self) -> ReplyMarkup:
         buttons = []
         for component in self._components:
             if isinstance(component, ButtonComponent):
                 buttons.append(component.render_button())
 
-
         return buttons
 
-
-    async def build(self, message: Message, form: FormAddon):
-        text = self._text()
-        reply_markup = self._markup()
-        print(text, reply_markup, self._components)
-        await form.new(message, text, reply_markup)
+    async def build(self, message: Message, form: FormAddon) -> str:
+        text = self.text()
+        reply_markup = self.markup()
+        return await form.new(message, text, reply_markup)

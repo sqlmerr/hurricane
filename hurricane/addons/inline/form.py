@@ -1,3 +1,5 @@
+import inspect
+
 from typing import Any
 
 from aiogram.types import (
@@ -6,7 +8,8 @@ from aiogram.types import (
     InputTextMessageContent,
     InlineKeyboardMarkup,
     InlineKeyboardButton,
-    CallbackQuery, CopyTextButton,
+    CallbackQuery,
+    CopyTextButton,
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from pyrogram import Client
@@ -50,13 +53,19 @@ class FormAddon(Addon):
             return
 
         handler = callback["handler"]
+        unit_id = callback["unit_id"]
         args = callback.get("args", ())
         kwargs = callback.get("kwargs", {})
 
         query = HurricaneCallbackQuery(call, self.mod.inline)
+        func_args = inspect.getfullargspec(handler)[0]
+        if "unit_id" in func_args:
+            kwargs["unit_id"] = unit_id
         await handler(query, *args, **kwargs)
 
-    def __create_button(self, button: dict, unit_id: str) -> InlineKeyboardButton | None:
+    def __create_button(
+        self, button: dict, unit_id: str
+    ) -> InlineKeyboardButton | None:
         text = button["text"]
         if "data" in button:
             return InlineKeyboardButton(text=text, callback_data=button["data"])
@@ -67,6 +76,7 @@ class FormAddon(Addon):
         elif "callback" in button:
             uid = utils.random_identifier(16)
             self._callback_map[uid] = {
+                "unit_id": unit_id,
                 "handler": button["callback"],
                 **(
                     {"args": button["args"]}
@@ -79,9 +89,13 @@ class FormAddon(Addon):
                     else {}
                 ),
             }
-            return InlineKeyboardButton(text=text, callback_data=f"{unit_id}:form:{uid}")
+            return InlineKeyboardButton(
+                text=text, callback_data=f"{unit_id}:form:{uid}"
+            )
         elif "copy_text" in button:
-            return InlineKeyboardButton(text=text, copy_text=CopyTextButton(text=button["copy_text"]))
+            return InlineKeyboardButton(
+                text=text, copy_text=CopyTextButton(text=button["copy_text"])
+            )
         elif "action" in button:
             action = button["action"]
             if action == "close":
@@ -114,7 +128,7 @@ class FormAddon(Addon):
 
         return builder.as_markup()
 
-    async def new(self, message: Message, text: str, reply_markup: ReplyMarkup):
+    async def new(self, message: Message, text: str, reply_markup: ReplyMarkup) -> str:
         uid = utils.random_identifier(16)
         self.mod.inline.add_unit(
             Unit(
@@ -139,3 +153,5 @@ class FormAddon(Addon):
         )
 
         await message.delete()
+
+        return uid

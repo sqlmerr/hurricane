@@ -7,7 +7,12 @@ SUPPORTED_LANGUAGES = ["ru", "en"]
 
 
 class TranslateAddon(Addon):
-    def __init__(self, mod: "hurricane.Module", en: Translation | None = None, ru: Translation | None = None) -> None:
+    def __init__(
+        self,
+        mod: "hurricane.Module",
+        en: Translation | None = None,
+        ru: Translation | None = None,
+    ) -> None:
         super().__init__(mod)
         self.translations = {
             "ru": ru if ru else {},
