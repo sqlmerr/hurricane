@@ -21,7 +21,6 @@ class HurricaneCallbackQuery(CallbackQuery):
         call: CallbackQuery,
         manager: Any,
     ) -> None:
-
         attrs = {
             "id",
             "from_user",

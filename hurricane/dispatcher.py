@@ -19,8 +19,8 @@ class Dispatcher:
         self.loader = loader
 
     async def _message_handler(self, app: Client, message: Message) -> None:
-        if not await message_filters(app, message):
-            return
+        # if not await message_filters(app, message):
+        #     return
 
         prefix = self.loader._db.get("settings", "prefix", ".")
         if not message.text or (

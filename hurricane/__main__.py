@@ -45,6 +45,7 @@ async def main():
     print(logo)
 
     database = Database(BASE_PATH / "database.json")
+    client.hurricane_database = database
     inline = InlineManager(client, database)
     t = database.get("core.inline", "token")
     await inline.load(t if t else await inline.obtain_token())

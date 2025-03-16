@@ -29,6 +29,7 @@ class ButtonComponent(Component):
     def _render_button(self) -> list[dict]:
         raise NotImplementedError
 
+
 class PositionComponent(Component):
     def render(self) -> list[list[dict]]:
         return self._render()
@@ -56,12 +57,14 @@ class ClickableButton(ButtonComponent):
         super().__init__()
 
     def _render_button(self) -> list[dict]:
-        return [{
-            "text": self.text,
-            "callback": self.on_click,
-            "args": self.args,
-            "kwargs": self.kwargs,
-        }]
+        return [
+            {
+                "text": self.text,
+                "callback": self.on_click,
+                "args": self.args,
+                "kwargs": self.kwargs,
+            }
+        ]
 
 
 class UrlButton(ButtonComponent):
@@ -81,6 +84,7 @@ class RawButton(ButtonComponent):
 
     def _render_button(self) -> list[dict]:
         return [self.data]
+
 
 class Group(PositionComponent):
     def __init__(self, *components: ButtonComponent, width: int = 3):
@@ -105,9 +109,10 @@ class Group(PositionComponent):
         return buttons
 
 
-
 class Builder:
-    def __init__(self, *components: TextComponent | ButtonComponent | PositionComponent) -> None:
+    def __init__(
+        self, *components: TextComponent | ButtonComponent | PositionComponent
+    ) -> None:
         self._components = components
 
     def text(self) -> str:

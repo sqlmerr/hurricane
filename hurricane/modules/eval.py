@@ -77,7 +77,7 @@ class Eval(hurricane.Module):
 
             print_result = stdout.getvalue()
         except Exception as e:
-            await message.edit(self.t("error").format(code, e))
+            await self.respond(message, self.t("error").format(code, e))
             return
 
         text = self.t("eval_text").format(
@@ -85,4 +85,4 @@ class Eval(hurricane.Module):
             html.escape(result),
             html.escape(print_result) if print_result else "None",
         )
-        await message.edit(text)
+        await self.respond(message, text)

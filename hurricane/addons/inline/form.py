@@ -20,7 +20,7 @@ from hurricane import utils
 from hurricane.addons.base import Addon
 from hurricane.inline.custom import HurricaneCallbackQuery
 from hurricane.inline.units import Unit
-from hurricane.security.rules import BaseRule, Me
+from hurricane.security.rules import BaseRule, OnlyMe, Owner
 from hurricane.types import ReplyMarkup
 
 
@@ -139,9 +139,16 @@ class FormAddon(Addon):
         if not rules:
             return False
 
-        return all([rule.check(user, self.mod.client) for rule in rules])
+        return all([rule.check(user, self.mod.client, self.mod.db) for rule in rules])
 
-    async def new(self, message: Message, text: str, reply_markup: ReplyMarkup, *, rules: list[BaseRule] | None = None) -> str:
+    async def new(
+        self,
+        message: Message,
+        text: str,
+        reply_markup: ReplyMarkup,
+        *,
+        rules: list[BaseRule] | None = None,
+    ) -> str:
         uid = utils.random_identifier(16)
         self.mod.inline.add_unit(
             Unit(
@@ -155,7 +162,7 @@ class FormAddon(Addon):
             "text": text,
             "reply_markup": reply_markup,
             "message": message,
-            "rules": rules if rules else [Me()]
+            "rules": rules if rules else [Owner()],
         }
 
         await message.edit("💥")

@@ -62,16 +62,16 @@ class Help(hurricane.Module):
             modules = self.loader.modules
             text = self.help_menu(modules)
 
-            await message.edit(text)
+            await self.respond(message, text)
             return
         mod = args[0]
         module = self.loader.find_module(mod)
         if module is None:
-            await message.edit(self.t("404"))
+            await self.respond(message, self.t("404"))
             return
         addon = module.find_addon(CommandAddon)
         if addon is None:
-            await message.edit(self.t("404"))
+            await self.respond(message, self.t("404"))
             return
         commands = list(addon.commands.values())
         c = []
@@ -95,4 +95,4 @@ class Help(hurricane.Module):
             commands=cmds,
             developer=module.developer,
         )
-        await message.edit(text)
+        await self.respond(message, text)

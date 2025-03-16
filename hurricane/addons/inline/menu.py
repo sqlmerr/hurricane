@@ -18,9 +18,13 @@ class BaseMenu:
         builder = entrypoint()
         self.unit_id = await builder.build(message, self.form, rules=self.rules)
 
-    async def restart(self, entrypoint: Callable[[], Builder], call: HurricaneCallbackQuery) -> None:
+    async def restart(
+        self, entrypoint: Callable[[], Builder], call: HurricaneCallbackQuery
+    ) -> None:
         builder = entrypoint()
         text = builder.text()
         reply_markup = builder.markup()
 
-        await call.edit(text, reply_markup=self.form.create_markup(reply_markup, self.unit_id))
+        await call.edit(
+            text, reply_markup=self.form.create_markup(reply_markup, self.unit_id)
+        )

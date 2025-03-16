@@ -2,10 +2,11 @@ import logging
 from typing import Callable, Awaitable
 
 from pyrogram import Client
-from pyrogram.types import Message
+from pyrogram.types import Message, User
 
 import hurricane
 from hurricane.addons.base import Addon
+from hurricane.security.rules import BaseRule, Owner
 
 
 def simple_command(
@@ -15,6 +16,7 @@ def simple_command(
     *,
     is_global: bool = False,
     aliases: list[str] | None = None,
+    rules: list[BaseRule] | None = None,
 ) -> "Command":
     return Command(
         command,
@@ -22,6 +24,7 @@ def simple_command(
         func=func,
         aliases=aliases or [],
         doc=doc if doc is not None else func.__doc__,
+        rules=rules if rules else [Owner()],
     )
 
 
@@ -50,12 +53,14 @@ class Command:
         func: CommandFunc,
         aliases: list[str],
         doc: str | Callable[[], str],
+        rules: list[BaseRule],
     ) -> None:
         self.cmd = cmd
         self.is_global = is_global
         self.aliases = aliases
         self.func = func
         self._doc = doc
+        self.rules = rules
 
     @property
     def doc(self) -> str:
@@ -96,6 +101,12 @@ class CommandAddon(Addon):
                 self._global_commands[cmd.cmd] = cmd
             self._commands[cmd.cmd] = cmd
 
+    def __check_rules(self, rules: list[BaseRule], user: User) -> bool:
+        if not rules:
+            return False
+
+        return all([rule.check(user, self.mod.client, self.mod.db) for rule in rules])
+
     async def handle_command(self, command: str, message: Message) -> bool:
         full_cmd = command.split(" ", 1)
         command = full_cmd[0]
@@ -112,6 +123,9 @@ class CommandAddon(Addon):
         cmd = self._find_command(command, is_global)
         if not cmd:
             return False
+        if not self.__check_rules(cmd.rules, message.from_user):
+            return False
+
         context = CommandContext(command=cmd, args=args)
         try:
             await cmd(message, context)

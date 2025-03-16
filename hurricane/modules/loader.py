@@ -23,7 +23,7 @@ class Loader(hurricane.Module):
     async def load_module(self, message: Message, context: CommandContext) -> None:
         reply = message.reply_to_message
         if not reply or (reply and reply.document is None):
-            await message.edit("<b>No reply!</b>")
+            await self.respond(message, "<b>No reply!</b>")
             return
 
         temp_file = tempfile.NamedTemporaryFile("w")
@@ -34,28 +34,28 @@ class Loader(hurricane.Module):
                 source = f.read()
         except UnicodeDecodeError:
             temp_file.close()
-            await message.edit("<b>Invalid encoding!</b>")
+            await self.respond(message, "<b>Invalid encoding!</b>")
 
         mod = await self.loader.load_third_party_module(source)
         if mod is None:
-            await message.edit("<b>Error while loading module!</b>")
+            await self.respond(message, "<b>Error while loading module!</b>")
         else:
             with open(f"hurricane/loaded_modules/{mod}.py", "w") as f:
                 f.write(source)
 
-            await message.edit("<b>Success!</b>")
+            await self.respond(message, "<b>Success!</b>")
         temp_file.close()
 
     async def unload_module(self, message: Message, context: CommandContext) -> None:
         args = context.args.split()
         if not args:
-            await message.edit("<b>No arguments!</b>")
+            await self.respond(message, "<b>No arguments!</b>")
             return
         mod = args[0].strip().lower()
 
         try:
             self.loader.unload_module(mod)
-            await message.edit("<b>Success!</b>")
+            await self.respond(message, "<b>Success!</b>")
         except ValueError:
-            await message.edit("<b>Module not found!</b>")
+            await self.respond(message, "<b>Module not found!</b>")
             return
