@@ -20,7 +20,7 @@ from hurricane.utils import create_asset_chat
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODS = ["loader", "test", "eval", "settings", "help"]
+DEFAULT_MODS = ["loader", "test", "eval", "settings", "help", "security"]
 
 T = TypeVar("T", bound=Addon)
 
