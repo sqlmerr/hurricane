@@ -7,7 +7,7 @@ from pyrogram.types import Message
 
 import hurricane
 from hurricane.addons.command import simple_command, CommandContext, CommandAddon
-from hurricane.addons.inline.components import Text, UrlButton, ClickableButton, Builder
+from hurricane.addons.inline.components import Text, UrlButton, ClickableButton, Builder, Group, RawButton
 from hurricane.addons.inline.form import FormAddon
 from hurricane.addons.inline.menu import BaseMenu
 from hurricane.addons.translate import TranslateAddon
@@ -33,8 +33,11 @@ class TestMenu(BaseMenu):
     def render(self) -> Builder:
         return Builder(
             Text(f"Current count: <code>{self.count}</code>"),
-            ClickableButton("+", self.increment),
-            ClickableButton("-", self.decrement)
+            Group(
+                ClickableButton("+", self.increment),
+                ClickableButton("-", self.decrement),
+                width=2
+            ),RawButton({"text": "Close", "action": "close"}),
         )
 
 

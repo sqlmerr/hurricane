@@ -1,11 +1,9 @@
 import abc
-from typing import Callable, Awaitable, Any
+from typing import Any
 
 from aiogram.types import Message
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from hurricane.addons.inline.form import FormAddon
-from hurricane.inline.custom import HurricaneCallbackQuery
 from hurricane.types import ReplyMarkup
 
 
@@ -24,11 +22,19 @@ class TextComponent(Component):
 
 
 class ButtonComponent(Component):
-    def render_button(self) -> dict:
+    def render_button(self) -> list[dict]:
         return self._render_button()
 
     @abc.abstractmethod
-    def _render_button(self) -> dict:
+    def _render_button(self) -> list[dict]:
+        raise NotImplementedError
+
+class PositionComponent(Component):
+    def render(self) -> list[list[dict]]:
+        return self._render()
+
+    @abc.abstractmethod
+    def _render(self) -> list[list[dict]]:
         raise NotImplementedError
 
 
@@ -49,13 +55,13 @@ class ClickableButton(ButtonComponent):
         self.kwargs = kwargs
         super().__init__()
 
-    def _render_button(self) -> dict:
-        return {
+    def _render_button(self) -> list[dict]:
+        return [{
             "text": self.text,
             "callback": self.on_click,
             "args": self.args,
             "kwargs": self.kwargs,
-        }
+        }]
 
 
 class UrlButton(ButtonComponent):
@@ -64,8 +70,8 @@ class UrlButton(ButtonComponent):
         self.url = url
         super().__init__()
 
-    def _render_button(self) -> dict:
-        return {"text": self.text, "url": self.url}
+    def _render_button(self) -> list[dict]:
+        return [{"text": self.text, "url": self.url}]
 
 
 class RawButton(ButtonComponent):
@@ -73,12 +79,35 @@ class RawButton(ButtonComponent):
         self.data = data
         super().__init__()
 
-    def _render_button(self) -> dict:
-        return self.data
+    def _render_button(self) -> list[dict]:
+        return [self.data]
+
+class Group(PositionComponent):
+    def __init__(self, *components: ButtonComponent, width: int = 3):
+        super().__init__()
+        self.components = components
+        self.width = width
+
+    def _render(self) -> list[list[dict]]:
+        buttons = []
+        row = []
+        for c in self.components:
+            row.extend(c.render_button())
+
+            if len(row) == self.width:
+                buttons.append(row)
+                row = []
+                continue
+
+        if row:
+            buttons.append(row)
+
+        return buttons
+
 
 
 class Builder:
-    def __init__(self, *components: TextComponent | ButtonComponent) -> None:
+    def __init__(self, *components: TextComponent | ButtonComponent | PositionComponent) -> None:
         self._components = components
 
     def text(self) -> str:
@@ -97,6 +126,8 @@ class Builder:
         for component in self._components:
             if isinstance(component, ButtonComponent):
                 buttons.append(component.render_button())
+            elif isinstance(component, PositionComponent):
+                buttons.extend(component.render())
 
         return buttons
 
