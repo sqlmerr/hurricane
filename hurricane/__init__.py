@@ -4,10 +4,12 @@ from hurricane import modloader, types
 from hurricane.modloader import Module
 from hurricane.fsm import Conversation
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 __authors__ = ["sqlmerr"]
 __license__ = "MIT"
 
-commit_hex = Repo(".").commit().hexsha
+repo = Repo(".")
+commit_hex = repo.commit().hexsha
+repository_url = "https://github.com/sqlmerr/hurricane"
 
 __all__ = ("modloader", "types", "Module", "Conversation")
