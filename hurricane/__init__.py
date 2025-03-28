@@ -5,7 +5,7 @@ from hurricane.modloader import Module
 from hurricane.fsm import Conversation
 from hurricane import utils
 
-__version__ = "0.5.3"
+__version__ = "0.5.4"
 __authors__ = ["sqlmerr"]
 __license__ = "MIT"
 

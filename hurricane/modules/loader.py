@@ -1,4 +1,6 @@
 import tempfile
+import inspect
+import io
 
 from pyrogram.types import Message
 
@@ -18,6 +20,7 @@ class Loader(hurricane.Module):
             simple_command(
                 "unloadmod", self.unload_module, is_global=True, aliases=["ulm"]
             ),
+            simple_command("showmod"), self.show_module, is_global=True, aliases=["sm", "ml"]
         )
 
     async def load_module(self, message: Message, context: CommandContext) -> None:
@@ -59,3 +62,28 @@ class Loader(hurricane.Module):
         except ValueError:
             await self.respond(message, "<b>Module not found!</b>")
             return
+        
+    async def show_module(self, message: Message, context: CommandContext) -> None:
+        args = context.args.split()
+        if not args:
+            await self.respond(message, "<b>No arguments!</b>")
+            return
+        mod = args[0].strip().lower()
+        
+        module = self.loader.find_module(mod)
+        if not module:
+            await self.respond(message, "<b>Module not found!</b>")
+            return
+        
+        sys_module = inspect.getmodule(module)
+        if not module:
+            await self.respond(message, "<b>Module not found!</b>")
+            return
+        
+        file = io.BytesIO(sys_module.__loader__.data)
+        file.name = f"{module.name}.py"
+        file.seek(0)
+        
+        await message.delete()
+        await self.client.send_document(message.chat.id, f"<b>Module {module.name}</b>", document=file)
+
