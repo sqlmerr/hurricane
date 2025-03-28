@@ -1,6 +1,7 @@
 from pyrogram.types import Message
 
 import hurricane
+from hurricane import utils
 from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 from hurricane.addons.translate import SUPPORTED_LANGUAGES, TranslateAddon
 
@@ -50,28 +51,28 @@ class Settings(hurricane.Module):
 
         args = context.args.split()
         if len(args) < 1:
-            await self.respond(message, self.t("no_args"))
+            await utils.respond(message, self.t("no_args"))
             return
 
         lang = args[0].lower().strip()
         if lang not in SUPPORTED_LANGUAGES:
-            await self.respond(message, self.t("no_lang"))
+            await utils.respond(message, self.t("no_lang"))
             return
 
         self.set("lang", lang)
-        await self.respond(message, self.t("set_lang_text"))
+        await utils.respond(message, self.t("set_lang_text"))
 
     async def set_prefix_cmd(self, message: Message, context: CommandContext) -> None:
         """Change userbot prefix"""
         args = context.args.split()
         if len(args) < 1:
-            await self.respond(message, self.t.no_args())
+            await utils.respond(message, self.t.no_args())
             return
 
         prefix = args[0].lower().strip()
         if len(prefix) != 1:
-            await self.respond(message, self.t("invalid_prefix"))
+            await utils.respond(message, self.t("invalid_prefix"))
             return
 
         self.set("prefix", prefix)
-        await self.respond(message, self.t("set_prefix_text"))
+        await utils.respond(message, self.t("set_prefix_text"))

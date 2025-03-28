@@ -1,6 +1,6 @@
-from typing import Awaitable, Callable
+from typing import Callable
 
-from pyrogram.types import Message, User
+from pyrogram.types import Message
 
 from hurricane.addons.inline.components import Builder
 from hurricane.addons.inline.form import FormAddon

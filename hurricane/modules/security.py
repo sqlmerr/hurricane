@@ -1,6 +1,7 @@
 from pyrogram.types import Message
 
 import hurricane
+from hurricane import utils
 from hurricane.addons.command import CommandAddon, simple_command, CommandContext
 from hurricane.addons.translate import TranslateAddon
 from hurricane.security.rules import OnlyMe
@@ -36,7 +37,7 @@ class Security(hurricane.Module):
         reply = message.reply_to_message
         args = context.args.split()
         if len(args) < 1 and not reply:
-            await self.respond(message, self.t.no_reply())
+            await utils.respond(message, self.t.no_reply())
             return
 
         if reply and (len(args) < 1 or not args[0].isdigit()):
@@ -46,10 +47,10 @@ class Security(hurricane.Module):
 
         owners = self.db.get("core.security", "owners", [self.client.me.id])
         if user in owners:
-            await self.respond(message, self.t.already_in_group())
+            await utils.respond(message, self.t.already_in_group())
             return
         owners.append(user)
         self.db.set("core.security", "owners", owners)
 
-        await self.respond(message, self.t.success())
+        await utils.respond(message, self.t.success())
         return

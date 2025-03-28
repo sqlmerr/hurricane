@@ -6,10 +6,10 @@ import time
 from pyrogram.types import Message
 
 import hurricane
+from hurricane import utils
 from hurricane.addons.command import simple_command, CommandContext, CommandAddon
 from hurricane.addons.inline.components import (
     Text,
-    UrlButton,
     ClickableButton,
     Builder,
     Group,
@@ -102,15 +102,15 @@ class TestMod(hurricane.Module):
 
     async def ping_command(self, message: Message, context: CommandContext) -> None:
         start = time.perf_counter_ns()
-        await self.respond(message, self.t.ping_txt(""))
+        await utils.respond(message, self.t.ping_txt(""))
         end = time.perf_counter_ns()
-        await self.respond(message, self.t.ping_txt(round((end - start) / 10**6, 3)))
+        await utils.respond(message, self.t.ping_txt(round((end - start) / 10**6, 3)))
 
     async def restart_cmd(self, message: Message, context: CommandContext) -> None:
         def restart():
             os.execl(sys.executable, sys.executable, "-m", "hurricane")
 
-        await self.respond(message, self.t.restart_txt())
+        await utils.respond(message, self.t.restart_txt())
         self.db.set("core.start", "message_id", message.id)
         self.db.set("core.start", "chat_id", message.chat.id)
         self.db.set("core.start", "restarted_at", time.perf_counter())

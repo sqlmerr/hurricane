@@ -1,7 +1,6 @@
 import logging
 from typing import Callable, Awaitable
 
-from pyrogram import Client
 from pyrogram.types import Message, User
 
 import hurricane

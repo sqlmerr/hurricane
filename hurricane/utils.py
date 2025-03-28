@@ -4,8 +4,8 @@ import string
 import os
 
 from pyrogram import Client
-from pyrogram.enums import ChatType
-from pyrogram.types import Chat
+from pyrogram.enums import ChatType, ParseMode
+from pyrogram.types import Chat, Message, MessageEntity
 from pathlib import Path
 
 import hurricane.modloader
@@ -64,3 +64,44 @@ def random_identifier(size: int = 10) -> str:
 
 def get_base_path() -> Path:
     return Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+
+async def respond(
+    self,
+    message: Message,
+    text: str,
+    parse_mode: ParseMode | None = None,
+    entities: list[MessageEntity] = None,
+    disable_web_page_preview: bool = None,
+    show_caption_above_media: bool = None,
+) -> Message:
+    me = message._client.me.id
+    if message.from_user.id == me:
+        return await message.edit(
+            text,
+            parse_mode,
+            entities,
+            disable_web_page_preview,
+            show_caption_above_media,
+        )
+    if hasattr(message, "hurricane_respond_new_msg"):
+        msg_id = message.hurricane_respond_new_msg
+        return await self.client.edit_message_text(
+            message.chat.id,
+            msg_id,
+            text,
+            parse_mode,
+            entities,
+            disable_web_page_preview,
+            show_caption_above_media,
+        )
+
+    msg = await message.reply(
+        text,
+        parse_mode=parse_mode,
+        entities=entities,
+        disable_web_page_preview=disable_web_page_preview,
+        show_caption_above_media=show_caption_above_media,
+    )
+    message.hurricane_respond_new_msg = msg.id
+    return msg

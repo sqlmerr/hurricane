@@ -6,13 +6,11 @@ from importlib.abc import SourceLoader
 from importlib.util import spec_from_file_location, module_from_spec
 from importlib.machinery import ModuleSpec
 from inspect import isclass
-from typing import Any, Type, TypeVar
+from typing import Any, TypeVar
 
-from pyrogram import Client, enums, types
-from pyrogram.types import Message
+from pyrogram import Client
 
 from hurricane.addons.base import Addon
-from hurricane.addons.command import CommandAddon
 from hurricane.database import Database
 from hurricane.database.assets import AssetManager
 from hurricane.inline.base import InlineManager
@@ -74,46 +72,6 @@ class Module:
             archive=archive,
             avatar=avatar,
         )
-
-    async def respond(
-        self,
-        message: Message,
-        text: str,
-        parse_mode: enums.ParseMode | None = None,
-        entities: list["types.MessageEntity"] = None,
-        disable_web_page_preview: bool = None,
-        show_caption_above_media: bool = None,
-    ) -> Message:
-        me = self.client.me.id
-        if message.from_user.id == me:
-            return await message.edit(
-                text,
-                parse_mode,
-                entities,
-                disable_web_page_preview,
-                show_caption_above_media,
-            )
-        if hasattr(message, "hurricane_respond_new_msg"):
-            msg_id = message.hurricane_respond_new_msg
-            return await self.client.edit_message_text(
-                message.chat.id,
-                msg_id,
-                text,
-                parse_mode,
-                entities,
-                disable_web_page_preview,
-                show_caption_above_media,
-            )
-
-        msg = await message.reply(
-            text,
-            parse_mode=parse_mode,
-            entities=entities,
-            disable_web_page_preview=disable_web_page_preview,
-            show_caption_above_media=show_caption_above_media,
-        )
-        message.hurricane_respond_new_msg = msg.id
-        return msg
 
 
 class StringLoader(SourceLoader):

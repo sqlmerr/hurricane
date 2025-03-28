@@ -12,7 +12,6 @@ from aiogram.types import (
     CopyTextButton,
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from pyrogram import Client
 from pyrogram.types import Message, User
 
 import hurricane
@@ -20,7 +19,7 @@ from hurricane import utils
 from hurricane.addons.base import Addon
 from hurricane.inline.custom import HurricaneCallbackQuery
 from hurricane.inline.units import Unit
-from hurricane.security.rules import BaseRule, OnlyMe, Owner
+from hurricane.security.rules import BaseRule, Owner
 from hurricane.types import ReplyMarkup
 
 
