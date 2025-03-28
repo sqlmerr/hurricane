@@ -20,7 +20,7 @@ class Loader(hurricane.Module):
             simple_command(
                 "unloadmod", self.unload_module, is_global=True, aliases=["ulm"]
             ),
-            simple_command("showmod"), self.show_module, is_global=True, aliases=["sm", "ml"]
+            simple_command("showmod", self.show_module, is_global=True, aliases=["sm", "ml"])
         )
 
     async def load_module(self, message: Message, context: CommandContext) -> None:
