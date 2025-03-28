@@ -85,5 +85,5 @@ class Loader(hurricane.Module):
         file.seek(0)
         
         await message.delete()
-        await self.client.send_document(message.chat.id, f"<b>Module {module.name}</b>", document=file)
+        await self.client.send_document(message.chat.id, document=file, caption=f"<b>Module {module.name}</b>")
 
