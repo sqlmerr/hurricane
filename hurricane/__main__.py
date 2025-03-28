@@ -1,8 +1,5 @@
 import asyncio
 import logging
-import os
-import time
-from pathlib import Path
 
 from pyrogram import Client, idle
 from pyrogram.types import Chat
@@ -23,8 +20,7 @@ logging.getLogger("aiogram").setLevel(logging.WARNING)
 logging.getLogger("aiohttp").setLevel(logging.WARNING)
 logger = logging.getLogger("hurricane")
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-BASE_PATH = Path(BASE_DIR)
+BASE_PATH = utils.get_base_path()
 
 
 async def create_log_chat(client: Client, loader: ModuleLoader) -> Chat:

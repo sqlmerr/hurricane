@@ -1,10 +1,12 @@
 import asyncio
 import random
 import string
+import os
 
 from pyrogram import Client
 from pyrogram.enums import ChatType
 from pyrogram.types import Chat
+from pathlib import Path
 
 import hurricane.modloader
 
@@ -58,3 +60,7 @@ def random_identifier(size: int = 10) -> str:
     return "".join(
         random.choice(string.ascii_letters + string.digits) for _ in range(size)
     )
+
+
+def get_base_path() -> Path:
+    return Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))

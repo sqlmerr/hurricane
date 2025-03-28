@@ -1,0 +1,11 @@
+services:
+  hurricane:
+    build: 
+      context: .
+    volumes:
+      - data:/data
+    stop_signal: SIGINT
+    restart: unless-stopped
+
+volumes:
+  data:
