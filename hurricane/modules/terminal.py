@@ -1,4 +1,4 @@
-import os
+import html
 import asyncio
 import hurricane
 
@@ -35,12 +35,12 @@ class TerminalModule(hurricane.Module):
     def __init__(self):
         self.t = TranslateAddon(self, en={
             "result_txt": (
-                "<emoji id=5472111548572900003>⌨️</emoji> <b>Command</b>: <pre language='bash'><code><{cmd}/code></pre>\n"
+                "<emoji id=5472111548572900003>⌨️</emoji> <b>Command</b>: <pre language='bash'><code>{cmd}</code></pre>\n"
                 "💾 <b>Output:</b> <blockquote>{result}</blockquote>"
             )
         }, ru={
             "result_txt": (
-                "<emoji id=5472111548572900003>⌨️</emoji> <b>Команда</b>: <pre language='bash'><code><{cmd}/code></pre>\n"
+                "<emoji id=5472111548572900003>⌨️</emoji> <b>Команда</b>: <pre language='bash'><code>{cmd}</code></pre>\n"
                 "💾 <b>Вывод:</b> <blockquote>{result}</blockquote>"
             )
         })
@@ -51,4 +51,4 @@ class TerminalModule(hurricane.Module):
         cmd = context.args
         output = await exec(cmd)
         
-        await self.respond(message, self.t.result_txt(cmd=cmd, result=output))
+        await self.respond(message, self.t.result_txt(cmd=cmd, result=html.escape(output)))
