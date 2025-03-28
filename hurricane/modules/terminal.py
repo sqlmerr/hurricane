@@ -29,7 +29,7 @@ async def exec(cmd: str):
 
 class TerminalModule(hurricane.Module):
     name = "terminal"
-    developer = "sqlmerr"
+    developer = "hurricane"
     version = hurricane.__version__
 
     def __init__(self):

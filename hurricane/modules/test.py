@@ -51,7 +51,7 @@ class TestMenu(BaseMenu):
 
 class TestMod(hurricane.Module):
     name = "test"
-    developer = "@sqlmerr"
+    developer = "hurricane"
     version = hurricane.__version__
 
     def __init__(self):

@@ -8,7 +8,7 @@ from hurricane.security.rules import OnlyMe
 
 class Security(hurricane.Module):
     name = "security"
-    developer = "sqlmerr"
+    developer = "hurricane"
     version = hurricane.__version__
 
     def __init__(self):
