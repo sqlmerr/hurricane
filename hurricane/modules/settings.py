@@ -7,7 +7,7 @@ from hurricane.addons.translate import SUPPORTED_LANGUAGES, TranslateAddon
 
 class Settings(hurricane.Module):
     name = "settings"
-    developer = "sqlmerr"
+    developer = "hurricane"
     version = hurricane.__version__
 
     def __init__(self):

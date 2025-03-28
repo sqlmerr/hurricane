@@ -11,7 +11,7 @@ from hurricane.addons.translate import TranslateAddon
 
 
 class Eval(hurricane.Module):
-    developer = "sqlmerr"
+    developer = "hurricane"
     version = hurricane.__version__
     name = "eval"
 

@@ -9,7 +9,7 @@ from hurricane.addons.translate import TranslateAddon
 
 class Help(hurricane.Module):
     name = "help"
-    developer = "sqlmerr"
+    developer = "hurricane"
     version = hurricane.__version__
 
     def __init__(self):

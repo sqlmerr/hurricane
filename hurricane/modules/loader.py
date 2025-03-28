@@ -10,7 +10,7 @@ from hurricane.addons.translate import TranslateAddon
 
 class Loader(hurricane.Module):
     name = "loader"
-    developer = "@sqlmerr"
+    developer = "hurricane"
     version = hurricane.__version__
 
     async def on_load(self):
