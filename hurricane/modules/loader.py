@@ -80,7 +80,7 @@ class Loader(hurricane.Module):
             await self.respond(message, "<b>Module not found!</b>")
             return
         
-        file = io.BytesIO(inspect.getsource(sys_module))
+        file = io.BytesIO(inspect.getsource(sys_module).encode("utf-8"))
         file.name = f"{module.name}.py"
         file.seek(0)
         
