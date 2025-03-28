@@ -7,7 +7,7 @@ from hurricane import utils
 
 __version__ = "0.5.5"
 __authors__ = ["sqlmerr"]
-__license__ = "MIT"
+__license__ = "GPLv3"
 
 repo = Repo(".")
 commit_hex = repo.commit().hexsha
