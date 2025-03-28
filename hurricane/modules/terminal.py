@@ -45,7 +45,7 @@ class TerminalModule(hurricane.Module):
             )
         })
         self.c = CommandAddon(self)
-        self.c.register(simple_command("terminal"))
+        self.c.register(simple_command("terminal", self.terminal, is_global=True))
 
     async def terminal(self, message: Message, context: CommandContext) -> None:
         cmd = context.args
