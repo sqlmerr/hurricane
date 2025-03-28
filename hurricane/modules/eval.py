@@ -6,6 +6,7 @@ import meval
 from pyrogram.types import Message
 
 import hurricane
+from hurricane import utils
 from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 from hurricane.addons.translate import TranslateAddon
 
@@ -77,7 +78,7 @@ class Eval(hurricane.Module):
 
             print_result = stdout.getvalue()
         except Exception as e:
-            await self.respond(message, self.t("error").format(code, e))
+            await utils.respond(message, self.t("error").format(code, e))
             return
 
         text = self.t("eval_text").format(
@@ -85,4 +86,4 @@ class Eval(hurricane.Module):
             html.escape(result),
             html.escape(print_result) if print_result else "None",
         )
-        await self.respond(message, text)
+        await utils.respond(message, text)

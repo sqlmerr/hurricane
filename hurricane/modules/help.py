@@ -3,6 +3,7 @@ import html
 from pyrogram.types import Message
 
 import hurricane
+from hurricane import utils
 from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 from hurricane.addons.translate import TranslateAddon
 
@@ -62,16 +63,16 @@ class Help(hurricane.Module):
             modules = self.loader.modules
             text = self.help_menu(modules)
 
-            await self.respond(message, text)
+            await utils.respond(message, text)
             return
         mod = args[0]
         module = self.loader.find_module(mod)
         if module is None:
-            await self.respond(message, self.t("404"))
+            await utils.respond(message, self.t("404"))
             return
         addon = module.find_addon(CommandAddon)
         if addon is None:
-            await self.respond(message, self.t("404"))
+            await utils.respond(message, self.t("404"))
             return
         commands = list(addon.commands.values())
         c = []
@@ -95,4 +96,4 @@ class Help(hurricane.Module):
             commands=cmds,
             developer=module.developer,
         )
-        await self.respond(message, text)
+        await utils.respond(message, text)

@@ -3,7 +3,6 @@ from typing import Any
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 from pydantic import ConfigDict
 
-from hurricane.types import ReplyMarkup
 
 
 class HurricaneCallbackQuery(CallbackQuery):

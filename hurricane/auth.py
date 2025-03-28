@@ -2,7 +2,6 @@ import asyncio
 import json
 import logging
 import os.path
-from csv import excel
 
 from pyrogram.errors import SessionPasswordNeeded, BadRequest
 from pyrogram.qrlogin import QRLogin
