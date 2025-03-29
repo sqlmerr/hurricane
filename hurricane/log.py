@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import traceback
 
 from pyrogram import Client
 from pyrogram.types import Chat
@@ -24,6 +25,17 @@ class TelegramLogHandler(logging.Handler):
             if not self.buffer:
                 continue
 
+            queue = ""
+            for r in self.buffer:
+                if r.exc_info:
+                    exc = r.exc_info[1]
+                    trace = traceback.format_exception(exc)
+                    full_traceback = "\n".join(trace)
+                    txt = f"<b>❌ An unexpected error recieved:</b>\n{full_traceback}"
+                    await self._inline.bot.send_message(self._chat.id, txt)
+                else:
+                    queue += f"<b>[{r.levelname}]</b>: <code>{r.message}</code>\n"
+                
             text = "\n".join(
                 f"<b>[{r.levelname}]</b>: <code>{r.message}</code>" for r in self.buffer
             )
