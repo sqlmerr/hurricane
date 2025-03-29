@@ -1,6 +1,6 @@
 # To-do
 - [x] about module
-- [ ] internal event handling (restart, full_load, unload, reload, start)
+- [x] internal event handling (restart, full_load, unload, reload, start)
 - [ ] module reloading
 - [ ] errors with traceback
 - [ ] config module + addon
