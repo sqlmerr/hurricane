@@ -49,7 +49,6 @@ async def main():
 
     loader = ModuleLoader(client, database, inline)
     client.loader = loader
-    await loader.load()
 
     asset_manager = AssetManager(loader, client)
     await asset_manager.load()
