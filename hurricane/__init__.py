@@ -7,7 +7,7 @@ from hurricane.modloader import Module
 from hurricane.fsm import Conversation
 from hurricane import utils
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
 __authors__ = ["sqlmerr"]
 __license__ = "GPLv3"
 

@@ -28,7 +28,7 @@ class Module:
     name: str
     developer: str
     version: str | None
-    dependencies: list[str] = [] # list of modules
+    dependencies: list[str] = []  # list of modules
 
     client: Client
     db: Database
@@ -100,8 +100,10 @@ class ModuleLoader:
         self._db = db
         self.inline = inline
         self.modules: dict[str, Module] = {}
-        
-        self.__internal_event_handlers: list[dict[str, Callable[[], Awaitable[None]] | str]] = []
+
+        self.__internal_event_handlers: list[
+            dict[str, Callable[[], Awaitable[None]] | str]
+        ] = []
 
     async def load(self) -> None:
         module_dir = "hurricane/modules"
@@ -144,7 +146,10 @@ class ModuleLoader:
                     if dep.lower() not in self.modules.keys():
                         not_installed_deps.append(dep.lower())
                 if not_installed_deps:
-                    raise ValueError(f"some dependent modules not installed: {not_installed_deps}", not_installed_deps)
+                    raise ValueError(
+                        f"some dependent modules not installed: {not_installed_deps}",
+                        not_installed_deps,
+                    )
                 value.name = value.name or name
                 value.client = self._client
                 value.db = self._db
@@ -209,11 +214,10 @@ class ModuleLoader:
             )
         )
         return fltr[0] if len(fltr) > 0 else None
-    
-    def register_internal_event(self, event: str, func: Callable[[], Awaitable[None]]): 
+
+    def register_internal_event(self, event: str, func: Callable[[], Awaitable[None]]):
         self.__internal_event_handlers.append({"event": event, "func": func})
-        
-    
+
     async def send_internal_event(self, event: str):
         for h in self.__internal_event_handlers:
             if h.get("event") == event:

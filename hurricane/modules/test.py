@@ -61,13 +61,13 @@ class TestMod(hurricane.Module):
                 "ping_txt": "🏓 <b>Понг! {}</b>",
                 "restart_txt": "🔄 <b>Hurricane перезагружается...</b>",
                 "restarted": "✅ <b>Юзербот успешно перезагрузился за {} секунд</b>",
-                "loading": "✅ <b>Юзербот перезагрузился, но модули еще загружаются</b>"
+                "loading": "✅ <b>Юзербот перезагрузился, но модули еще загружаются</b>",
             },
             en={
                 "ping_txt": "🏓 <b>Pong! {}</b>",
                 "restart_txt": "🔄 <b>Hurricane is restarting...</b>",
                 "restarted": "✅ <b>Userbot successfully restarted in {} seconds</b>",
-                "loading": "✅ <b>Userbot restarted, but modules are currently loading</b>"
+                "loading": "✅ <b>Userbot restarted, but modules are currently loading</b>",
             },
         )
 
