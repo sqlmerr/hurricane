@@ -34,7 +34,7 @@ class TelegramLogHandler(logging.Handler):
                     txt = f"<b>❌ An unexpected error recieved:</b>\n<blockquote expandable>{full_traceback}</blockquote>"
                     await self._inline.bot.send_message(self._chat.id, txt)
                 else:
-                    queue += f"<b>[{r.levelname}]</b>: <code>{r.message}</code>\n"
+                    queue += f"<code>[{r.levelname}]: {r.message}</code>\n"
 
             self.buffer.clear()
             if queue:
