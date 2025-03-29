@@ -61,7 +61,7 @@ async def main():
     logger.info("Hurricane userbot is loaded.")
     load_text = (
         f"🌪 <b>Hurricane userbot {hurricane.__version__} started</b>\n"
-        f'🔑 <b>Version: <a href="{hurricane.repository_url}/commit/{hurricane.commit_hex}">{hurricane.commit_hex[:7]}</a></b>'
+        f'🔑 <b>Version: <a href="{hurricane.repository_url}/commit/{hurricane.commit_hex}">{hurricane.__version__} @ {hurricane.commit_hex[:7]}</a></b>'
     )
 
     await inline.bot.send_message(chat_id=chat.id, text=load_text)
