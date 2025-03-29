@@ -49,5 +49,5 @@ class AboutMod(hurricane.Module):
             "ram": "...",
         }
 
-        text = self.t.about(**data)
+        text = self.t.txt(**data)
         await utils.respond(message, text)
