@@ -4,6 +4,7 @@
 - [x] module dependencies
 - [ ] module reloading
 - [x] errors with traceback
+- [ ] update module
 - [ ] config module + addon
 - [ ] add new security rules
 - [ ] add security addon 
