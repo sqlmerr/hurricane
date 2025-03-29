@@ -65,7 +65,7 @@ class Module:
     ):
         return await create_asset_chat(
             self.client,
-            self.loader,
+            self.inline,
             title=title,
             desc=desc,
             supergroup=supergroup,
@@ -118,8 +118,11 @@ class ModuleLoader:
         ):
             module_path = os.path.join(os.path.abspath("."), module_dir, module)
             module_name = module[:-3]
-
-            mod = await self.load_module(module_name, module_path)
+            
+            try:
+                await self.load_module(module_name, module_path)
+            except Exception as e:
+                logging.error(f"Error while loading module: {e}")
 
         for external_mod in filter(
             lambda p: p.endswith(".py") and p != "__init__.py", external_modules
@@ -129,7 +132,10 @@ class ModuleLoader:
             )
             module_name = external_mod[:-3]
 
-            mod = await self.load_module(module_name, module_path)
+            try:
+                await self.load_module(module_name, module_path)
+            except Exception as e:
+                logging.error(f"Error while loading external module: {e}")
 
     def load_instance(
         self, name: str, path: str = "", spec: ModuleSpec | None = None

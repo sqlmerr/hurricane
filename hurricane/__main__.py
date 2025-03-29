@@ -23,10 +23,10 @@ logger = logging.getLogger("hurricane")
 BASE_PATH = utils.get_base_path()
 
 
-async def create_log_chat(client: Client, loader: ModuleLoader) -> Chat:
+async def create_log_chat(client: Client, inline: InlineManager) -> Chat:
     return await utils.create_asset_chat(
         client,
-        loader,
+        inline,
         "hurricane-logs",
         "Your userbot logs will be sent here",
         invite_bot=True,
@@ -46,6 +46,9 @@ async def main():
     inline = InlineManager(client, database)
     t = database.get("core.inline", "token")
     await inline.load(t if t else await inline.obtain_token())
+    
+    chat = await create_log_chat(client, inline)
+    logging.getLogger().addHandler(TelegramLogHandler(database, client, inline, chat))
 
     loader = ModuleLoader(client, database, inline)
     await loader.load()
@@ -56,8 +59,6 @@ async def main():
     dp = Dispatcher(client, loader)
     await dp.load()
 
-    chat = await create_log_chat(client, loader)
-    logging.getLogger().addHandler(TelegramLogHandler(database, client, inline, chat))
     logger.info("Hurricane userbot is loaded.")
     load_text = (
         f"🌪 <b>Hurricane userbot {hurricane.__version__} started</b>\n"

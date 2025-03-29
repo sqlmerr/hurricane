@@ -8,7 +8,7 @@ from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import Chat, Message, MessageEntity
 from pathlib import Path
 
-import hurricane.modloader
+from hurricane.inline.base import InlineManager
 
 
 async def fw_protect():
@@ -17,7 +17,7 @@ async def fw_protect():
 
 async def create_asset_chat(
     client: Client,
-    loader: "hurricane.modloader.ModuleLoader",
+    inline: InlineManager,
     title: str,
     desc: str = "",
     supergroup: bool = False,
@@ -38,8 +38,8 @@ async def create_asset_chat(
             await chat.set_description(desc)
     else:
         users = []
-        if invite_bot and loader.inline.bot is not None:
-            users.append((await loader.inline.bot.me()).id)
+        if invite_bot and inline.bot is not None:
+            users.append((await inline.bot.me()).id)
         chat = await client.create_group(title, users)
 
         if desc:
