@@ -1,4 +1,5 @@
 import logging
+import traceback
 from typing import Callable, Awaitable
 
 from pyrogram.types import Message, User
@@ -130,5 +131,8 @@ class CommandAddon(Addon):
             await cmd(message, context)
         except Exception as e:
             logging.exception(e)
+            trace = "\n".join(traceback.format_exception(e))
+            text = f"<emoji id='5447644880824181073'>⚠️</emoji> <b>While handling command </b><code>{message.text}</code>\n<b>received unexpected error:</b>\n<blockquote expandable>{trace}</blockquote>"
+            await hurricane.utils.respond(message, text)
 
         return True

@@ -1,3 +1,5 @@
+import datetime
+import time
 import hurricane
 
 from hurricane import utils
@@ -45,8 +47,8 @@ class AboutMod(hurricane.Module):
             "version": hurricane.__version__,
             "commit": f"<a href='{hurricane.repository_url}/commit/{hurricane.commit_hex}'>{hurricane.commit_hex[:7]}</a>",
             "branch": hurricane.repo.active_branch,
-            "uptime": "...",
-            "ram": "...",
+            "uptime": datetime.timedelta(seconds=round(time.time() - hurricane.init_time)),
+            "ram": utils.get_ram(),
         }
 
         text = self.t.txt(**data)

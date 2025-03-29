@@ -1,8 +1,10 @@
 # To-do
 - [x] about module
 - [x] internal event handling (restart, full_load, unload, reload, start)
+- [x] module dependencies
 - [ ] module reloading
-- [ ] errors with traceback
+- [x] errors with traceback
+- [ ] update module
 - [ ] config module + addon
 - [ ] add new security rules
 - [ ] add security addon 
