@@ -35,13 +35,10 @@ class TelegramLogHandler(logging.Handler):
                     await self._inline.bot.send_message(self._chat.id, txt)
                 else:
                     queue += f"<b>[{r.levelname}]</b>: <code>{r.message}</code>\n"
-                
-            text = "\n".join(
-                f"<b>[{r.levelname}]</b>: <code>{r.message}</code>" for r in self.buffer
-            )
 
             self.buffer.clear()
-            await self._inline.bot.send_message(self._chat.id, text)
+            if queue:
+                await self._inline.bot.send_message(self._chat.id, queue)
 
     def emit(self, record: logging.LogRecord) -> None:
         if not self._db.get("core.inline", "use", False):
