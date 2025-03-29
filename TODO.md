@@ -3,7 +3,7 @@
 - [x] internal event handling (restart, full_load, unload, reload, start)
 - [x] module dependencies
 - [ ] module reloading
-- [ ] errors with traceback
+- [x] errors with traceback
 - [ ] config module + addon
 - [ ] add new security rules
 - [ ] add security addon 
