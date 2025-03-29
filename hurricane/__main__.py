@@ -1,10 +1,9 @@
 import asyncio
 import logging
 
+from pyrogram.raw.functions.account import DeleteAccount
 from pyrogram import Client, idle
 from pyrogram.types import Chat
-from pyrogram.raw.types.account import DeleteAccount
-
 import hurricane
 from hurricane import utils
 from hurricane.auth import Auth
