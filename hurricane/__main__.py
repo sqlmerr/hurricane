@@ -65,6 +65,7 @@ async def main():
     )
 
     await inline.bot.send_message(chat_id=chat.id, text=load_text)
+    await loader.send_internal_event("full_load")
 
     await idle()
     await client.stop()

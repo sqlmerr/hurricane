@@ -1,5 +1,5 @@
 # To-do
-- [ ] about module
+- [x] about module
 - [ ] internal event handling (restart, full_load, unload, reload, start)
 - [ ] module reloading
 - [ ] errors with traceback
