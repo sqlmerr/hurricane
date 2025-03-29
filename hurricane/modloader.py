@@ -28,6 +28,7 @@ class Module:
     name: str
     developer: str
     version: str | None
+    dependencies: list[str] # list of modules
 
     client: Client
     db: Database
@@ -138,6 +139,12 @@ class ModuleLoader:
 
         for key, value in vars(module).items():
             if isclass(value) and issubclass(value, Module):
+                not_installed_deps = []
+                for dep in value.dependencies:
+                    if dep.lower() not in self.modules.keys():
+                        not_installed_deps.append(dep.lower())
+                if not_installed_deps:
+                    raise ValueError(f"some dependent modules not installed: {not_installed_deps}", not_installed_deps)
                 value.name = value.name or name
                 value.client = self._client
                 value.db = self._db

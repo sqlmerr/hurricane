@@ -22,7 +22,7 @@ class Loader(hurricane.Module):
                 "no_args": "<emoji id='5210952531676504517'>🚫</emoji> <b>No args!</b>",
                 "no_reply": "<emoji id='5210952531676504517'>🚫</emoji> <b>No reply!</b>",
                 "invalid_encoding": "<emoji id='5210952531676504517'>🚫</emoji> <b>Invalid encoding!</b>",
-                "loading_error": "<emoji id='5210952531676504517'>🚫</emoji> <b>Error while loading module!</b>",
+                "loading_error": "<emoji id='5210952531676504517'>🚫</emoji> <b>Error while loading module: {}</b>",
                 "success": "<emoji id='5260463209562776385'>✅</emoji> <b>Success!</b>",
                 "mod_404": "<emoji id='5210952531676504517'>🚫</emoji> <b>Module not found!</b>",
                 "showmod_txt": "<b>📦 Module</b> <code>{mod}</code>\n\n<b>Version:</b> <code>{ver}</code>\n<b>Author:</b> <code>{author}</code>",
@@ -31,7 +31,7 @@ class Loader(hurricane.Module):
                 "no_args": "<emoji id='5210952531676504517'>🚫</emoji> <b>Нет аргументов!</b>",
                 "no_reply": "<emoji id='5210952531676504517'>🚫</emoji> <b>Вы не ответили на сообщение!</b>",
                 "invalid_encoding": "<emoji id='5210952531676504517'>🚫</emoji> <b>Невалидная кодировка!</b>",
-                "loading_error": "<emoji id='5210952531676504517'>🚫</emoji> <b>Ошибка во время загрузки модуля!</b>",
+                "loading_error": "<emoji id='5210952531676504517'>🚫</emoji> <b>Ошибка во время загрузки модуля: {}</b>",
                 "success": "<emoji id='5260463209562776385'>✅</emoji> <b>Успешно!</b>",
                 "mod_404": "<emoji id='5210952531676504517'>🚫</emoji> <b>Модуль не найден!</b>",
                 "showmod_txt": "<b>📦 Модуль</b> <code>{mod}</code>\n\n<b>Версия:</b> <code>{ver}</code>\n<b>Автор:</b> <code>{author}</code>",
@@ -64,9 +64,13 @@ class Loader(hurricane.Module):
             temp_file.close()
             await utils.respond(message, self.t.invalid_encoding())
 
-        mod = await self.loader.load_third_party_module(source)
+        try:
+            mod = await self.loader.load_third_party_module(source)
+        except ValueError as e:
+            await utils.respond(message, self.t.loading_error(e.args[0]))
+            raise
         if mod is None:
-            await utils.respond(message, self.t.loading_error())
+            await utils.respond(message, self.t.loading_error("None"))
         else:
             with open(f"hurricane/loaded_modules/{mod}.py", "w") as f:
                 f.write(source)
