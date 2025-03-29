@@ -132,7 +132,7 @@ class CommandAddon(Addon):
         except Exception as e:
             logging.exception(e)
             trace = "\n".join(traceback.format_exception(e))
-            text = f"<b>While handling command </b><code>{message.text}</code>\n<b>received unexpected error:</b>\n<blockquote expandable>{trace}</blockquote>"
+            text = f"<emoji id='5447644880824181073'>⚠️</emoji><b>While handling command </b><code>{message.text}</code>\n<b>received unexpected error:</b>\n<blockquote expandable>{trace}</blockquote>"
             await hurricane.utils.respond(message, text)
 
         return True
