@@ -18,7 +18,7 @@ class AboutMod(hurricane.Module):
             en={
                 "txt": (
                     "<emoji id='5220181540222291016'>🌪</emoji> <b>Hurricane userbot</b>\n\n"
-                    "<emoji id='5305265301917549162'>📎</emoji> <b>Version</b> - <code>{version} @ {commit}</code>\n"
+                    "<emoji id='5305265301917549162'>📎</emoji> <b>Version</b> - <code>{version} @</code> {commit}\n"
                     "<emoji id='5438496463044752972'>⭐️</emoji> <b>Branch</b> - <code>{branch}</code>\n\n"
                     "<emoji id='5424972470023104089'>🔥</emoji> <b>Uptime</b> - {uptime}\n"
                     "<emoji id='5341715473882955310'>⚙️</emoji> <b>Ram usage</b> - {ram}"
