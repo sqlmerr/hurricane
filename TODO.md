@@ -1,5 +1,9 @@
 # To-do
-- [ ] add support for Dragon userbot modules
+- [x] about module
+- [x] internal event handling (restart, full_load, unload, reload, start)
+- [ ] module reloading
+- [ ] errors with traceback
+- [ ] config module + addon
 - [ ] add new security rules
 - [ ] add security addon 
 - [ ] make rules customizable by user

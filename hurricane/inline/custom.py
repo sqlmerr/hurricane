@@ -4,7 +4,6 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 from pydantic import ConfigDict
 
 
-
 class HurricaneCallbackQuery(CallbackQuery):
     model_config = ConfigDict(
         use_enum_values=True,

@@ -61,11 +61,13 @@ class TestMod(hurricane.Module):
                 "ping_txt": "🏓 <b>Понг! {}</b>",
                 "restart_txt": "🔄 <b>Hurricane перезагружается...</b>",
                 "restarted": "✅ <b>Юзербот успешно перезагрузился за {} секунд</b>",
+                "loading": "✅ <b>Юзербот перезагрузился, но модули еще загружаются</b>"
             },
             en={
                 "ping_txt": "🏓 <b>Pong! {}</b>",
                 "restart_txt": "🔄 <b>Hurricane is restarting...</b>",
                 "restarted": "✅ <b>Userbot successfully restarted in {} seconds</b>",
+                "loading": "✅ <b>Userbot restarted, but modules are currently loading</b>"
             },
         )
 
@@ -78,8 +80,9 @@ class TestMod(hurricane.Module):
         )
 
         self.form = FormAddon(self)
+        self.loader.register_internal_event("full_load", self.full_load_handler)
 
-    async def on_load(self):
+    async def full_load_handler(self):
         if msg_id := self.db.get("core.start", "message_id"):
             chat_id = self.db.get("core.start", "chat_id")
             start = self.db.get("core.start", "restarted_at")
@@ -92,6 +95,15 @@ class TestMod(hurricane.Module):
 
             self.db.set("core.start", "message_id", None)
             self.db.set("core.start", "restarted_at", None)
+
+    async def on_load(self):
+        if msg_id := self.db.get("core.start", "message_id"):
+            chat_id = self.db.get("core.start", "chat_id")
+            await self.client.edit_message_text(
+                chat_id=chat_id,
+                message_id=msg_id,
+                text=self.t.loading(),
+            )
 
     async def inline_menu_cmd(self, message: Message, context: CommandContext):
         menu = TestMenu(self.form)
@@ -114,6 +126,7 @@ class TestMod(hurricane.Module):
         self.db.set("core.start", "message_id", message.id)
         self.db.set("core.start", "chat_id", message.chat.id)
         self.db.set("core.start", "restarted_at", time.perf_counter())
+        await self.loader.send_internal_event("restart")
         atexit.register(restart)
 
         return sys.exit(0)

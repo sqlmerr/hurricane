@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
+from pyrogram.raw.functions.account import DeleteAccount
 from pyrogram import Client, idle
 from pyrogram.types import Chat
-
 import hurricane
 from hurricane import utils
 from hurricane.auth import Auth
@@ -34,6 +34,7 @@ async def create_log_chat(client: Client, loader: ModuleLoader) -> Chat:
 
 
 async def main():
+    DeleteAccount.__new__ = None
     client = await Auth().authorize()
 
     with (BASE_PATH / "assets" / "logo.txt").open(mode="r", encoding="utf-8") as f:
@@ -60,10 +61,11 @@ async def main():
     logger.info("Hurricane userbot is loaded.")
     load_text = (
         f"🌪 <b>Hurricane userbot {hurricane.__version__} started</b>\n"
-        f'🔑 <b>Version: <a href="{hurricane.repository_url}/commit/{hurricane.commit_hex}">{hurricane.commit_hex[:7]}</a></b>'
+        f'🔑 <b>Version: <a href="{hurricane.repository_url}/commit/{hurricane.commit_hex}">{hurricane.__version__} @ {hurricane.commit_hex[:7]}</a></b>'
     )
 
     await inline.bot.send_message(chat_id=chat.id, text=load_text)
+    await loader.send_internal_event("full_load")
 
     await idle()
     await client.stop()

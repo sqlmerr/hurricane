@@ -6,7 +6,7 @@ from importlib.abc import SourceLoader
 from importlib.util import spec_from_file_location, module_from_spec
 from importlib.machinery import ModuleSpec
 from inspect import isclass
-from typing import Any, TypeVar
+from typing import Any, TypeVar, Callable, Awaitable
 
 from pyrogram import Client
 
@@ -99,6 +99,8 @@ class ModuleLoader:
         self._db = db
         self.inline = inline
         self.modules: dict[str, Module] = {}
+        
+        self.__internal_event_handlers: list[dict[str, Callable[[], Awaitable[None]] | str]] = []
 
     async def load(self) -> None:
         module_dir = "hurricane/modules"
@@ -198,3 +200,12 @@ class ModuleLoader:
             )
         )
         return fltr[0] if len(fltr) > 0 else None
+    
+    def register_internal_event(self, event: str, func: Callable[[], Awaitable[None]]): 
+        self.__internal_event_handlers.append({"event": event, "func": func})
+        
+    
+    async def send_internal_event(self, event: str):
+        for h in self.__internal_event_handlers:
+            if h.get("event") == event:
+                await h.get("func")()
