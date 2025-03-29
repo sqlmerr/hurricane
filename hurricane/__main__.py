@@ -48,6 +48,7 @@ async def main():
     await inline.load(t if t else await inline.obtain_token())
 
     loader = ModuleLoader(client, database, inline)
+    await loader.load()
     client.loader = loader
 
     asset_manager = AssetManager(loader, client)
