@@ -28,7 +28,7 @@ class Module:
     name: str
     developer: str
     version: str | None
-    dependencies: list[str] # list of modules
+    dependencies: list[str] = [] # list of modules
 
     client: Client
     db: Database
