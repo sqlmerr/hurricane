@@ -67,7 +67,6 @@ def get_base_path() -> Path:
 
 
 async def respond(
-    self,
     message: Message,
     text: str,
     parse_mode: ParseMode | None = None,
@@ -86,7 +85,7 @@ async def respond(
         )
     if hasattr(message, "hurricane_respond_new_msg"):
         msg_id = message.hurricane_respond_new_msg
-        return await self.client.edit_message_text(
+        return await message._client.edit_message_text(
             message.chat.id,
             msg_id,
             text,

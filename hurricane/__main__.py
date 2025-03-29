@@ -3,6 +3,7 @@ import logging
 
 from pyrogram import Client, idle
 from pyrogram.types import Chat
+from pyrogram.raw.types.account import DeleteAccount
 
 import hurricane
 from hurricane import utils
@@ -34,6 +35,7 @@ async def create_log_chat(client: Client, loader: ModuleLoader) -> Chat:
 
 
 async def main():
+    DeleteAccount.__new__ = None
     client = await Auth().authorize()
 
     with (BASE_PATH / "assets" / "logo.txt").open(mode="r", encoding="utf-8") as f:
