@@ -19,7 +19,7 @@ from hurricane.utils import create_asset_chat
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODS = ("loader", "test", "eval", "settings", "help", "security")
+DEFAULT_MODS = ("loader", "test", "eval", "settings", "help", "security", "terminal")
 
 T = TypeVar("T", bound=Addon)
 
@@ -185,6 +185,8 @@ class ModuleLoader:
             return instance.name.lower()
 
         except Exception as e:
+            if isinstance(e, ValueError):
+                raise
             logger.exception(e)
             return None
 

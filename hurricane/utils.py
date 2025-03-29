@@ -104,3 +104,14 @@ async def respond(
     )
     message.hurricane_respond_new_msg = msg.id
     return msg
+
+def get_ram() -> float:
+    try:
+        import psutil
+        process = psutil.Process(os.getpid())
+        mem = process.memory_info()[0] / 2.0**20
+        for child in process.children(recursive=True):
+            mem += child.memory_info()[0] / 2.0**20
+        return round(mem, 1)
+    except:
+        return 0
