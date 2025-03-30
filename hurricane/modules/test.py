@@ -80,7 +80,7 @@ class TestMod(hurricane.Module):
         )
 
         self.form = FormAddon(self)
-        self.loader.register_internal_event("full_load", self.full_load_handler)
+        self.loader.eventbus.subscribe("full_load", self.full_load_handler)
 
     async def full_load_handler(self):
         if msg_id := self.db.get("core.start", "message_id"):
@@ -126,7 +126,7 @@ class TestMod(hurricane.Module):
         self.db.set("core.start", "message_id", message.id)
         self.db.set("core.start", "chat_id", message.chat.id)
         self.db.set("core.start", "restarted_at", time.perf_counter())
-        await self.loader.send_internal_event("restart")
+        await self.loader.eventbus.publish("restart", None)
         atexit.register(restart)
 
         return sys.exit(0)

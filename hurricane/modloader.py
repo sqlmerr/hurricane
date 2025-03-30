@@ -13,6 +13,7 @@ from pyrogram import Client
 from hurricane.addons.base import Addon
 from hurricane.database import Database
 from hurricane.database.assets import AssetManager
+from hurricane.eventbus import EventBus
 from hurricane.inline.base import InlineManager
 from hurricane.types import JSON
 from hurricane.utils import create_asset_chat
@@ -101,9 +102,7 @@ class ModuleLoader:
         self.inline = inline
         self.modules: dict[str, Module] = {}
 
-        self.__internal_event_handlers: list[
-            dict[str, Callable[[], Awaitable[None]] | str]
-        ] = []
+        self.eventbus = EventBus()
 
     async def load(self) -> None:
         module_dir = "hurricane/modules"
@@ -220,11 +219,3 @@ class ModuleLoader:
             )
         )
         return fltr[0] if len(fltr) > 0 else None
-
-    def register_internal_event(self, event: str, func: Callable[[], Awaitable[None]]):
-        self.__internal_event_handlers.append({"event": event, "func": func})
-
-    async def send_internal_event(self, event: str):
-        for h in self.__internal_event_handlers:
-            if h.get("event") == event:
-                await h.get("func")()
