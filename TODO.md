@@ -2,7 +2,7 @@
 - [x] about module
 - [x] internal event handling (restart, full_load, unload, reload, start)
 - [x] module dependencies
-- [ ] replsce internal events with eventbus
+- [x] replace internal events with eventbus
 - [ ] module reloading
 - [x] errors with traceback
 - [ ] update module
