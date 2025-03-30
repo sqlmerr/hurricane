@@ -1,5 +1,4 @@
 import dataclasses
-import random
 import logging
 import inspect
 
@@ -11,7 +10,6 @@ EventCallback = Callable[[V, dict], Awaitable[Any]] | Callable[[], Awaitable[Any
 
 @dataclasses.dataclass(frozen=True)
 class EventHandler:
-    id_: int
     callback: EventCallback
 
 
@@ -21,20 +19,16 @@ class EventBus:
 
     def subscribe(self, event: str, func: EventCallback) -> None:
         handlers = self._handlers.get(event, [])
-        handler = EventHandler(random.randint(1, 9999), func)
-        func.eventbus_id = handler.id_
+        handler = EventHandler(func)
         handlers.append(handler)
+        self._handlers[event] = handlers
 
     def unsubscribe(self, event: str, func: EventCallback) -> bool:
         if not (handlers := self._handlers.get(event)):
             return False
 
-        handler_id = getattr(func, "eventbus_id")
-        if not handler_id:
-            return False
-
         for i, h in enumerate(handlers):
-            if h.id_ == handler_id:
+            if h.callback == func:
                 handlers.pop(i)
                 self._handlers[event] = handlers
                 return True
@@ -43,7 +37,7 @@ class EventBus:
     async def publish(self, event: str, val: V, **kwargs):
         for handler in self._handlers.get(event, []):
             try:
-                if len(inspect.getfullargspec(handler.callback).args) == 0:
+                if len(inspect.getfullargspec(handler.callback).args) < 2:
                     await handler.callback()
                 else:
                     await handler.callback(val, kwargs)

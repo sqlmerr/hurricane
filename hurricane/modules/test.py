@@ -21,6 +21,8 @@ from hurricane.addons.translate import TranslateAddon
 from hurricane.inline.custom import HurricaneCallbackQuery
 from hurricane.security.rules import In
 
+from aiogram.types import Message as BotMessage
+
 
 class TestMenu(BaseMenu):
     def __init__(self, form: FormAddon, count: int = 0):
@@ -81,6 +83,22 @@ class TestMod(hurricane.Module):
 
         self.form = FormAddon(self)
         self.loader.eventbus.subscribe("full_load", self.full_load_handler)
+        self.loader.eventbus.subscribe("message", self.example_watcher)
+        self.loader.eventbus.subscribe("inline:message", self.inline_bot_command)
+
+    async def example_watcher(self, message: Message, data: dict):
+        if message.text != "testMessage":
+            return False
+        print("got testMessage!")
+
+        return True
+
+    async def inline_bot_command(self, message: BotMessage, data: dict):
+        if message.text != "/testmenu":
+            return False
+        await message.answer(f"<b>Hello, {message.from_user.first_name}!</b>")
+
+        return True
 
     async def full_load_handler(self):
         if msg_id := self.db.get("core.start", "message_id"):

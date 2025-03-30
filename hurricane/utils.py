@@ -2,13 +2,12 @@ import asyncio
 import random
 import string
 import os
+import hurricane
 
 from pyrogram import Client
 from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import Chat, Message, MessageEntity
 from pathlib import Path
-
-from hurricane.inline.base import InlineManager
 
 
 async def fw_protect():
@@ -17,7 +16,7 @@ async def fw_protect():
 
 async def create_asset_chat(
     client: Client,
-    inline: InlineManager,
+    inline: "hurricane.inline.InlineManager",
     title: str,
     desc: str = "",
     supergroup: bool = False,

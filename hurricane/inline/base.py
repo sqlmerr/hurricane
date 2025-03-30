@@ -17,15 +17,17 @@ from hurricane.database import Database
 from .units import UnitManager
 from .token import TokenManager
 from .. import utils
+from ..eventbus import EventBus
 
 
 class InlineManager(UnitManager):
-    def __init__(self, client: Client, db: Database) -> None:
+    def __init__(self, client: Client, db: Database, eventbus: EventBus) -> None:
         super().__init__()
 
         self._db = db
         self._client = client
         self._token_manager = TokenManager(db, client)
+        self._eventbus = eventbus
 
         self._bot: Bot | None = None
         self.bot_id: int | None = None
@@ -123,6 +125,8 @@ class InlineManager(UnitManager):
             await message.reply("<b>🌪 Welcome to Hurricane userbot!</b>")
             return
 
+        await self._eventbus.publish_first("inline:message", message)
+
     async def _callback_handler(self, callback: CallbackQuery) -> None:
         if "form" in callback.data:
             s = callback.data.split(":")
@@ -138,3 +142,5 @@ class InlineManager(UnitManager):
 
                 await unit.callback_handler(callback, uid)
                 return
+
+        await self._eventbus.publish_first("inline:callback_query", callback)

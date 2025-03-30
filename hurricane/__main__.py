@@ -10,6 +10,7 @@ from hurricane.auth import Auth
 from hurricane.database import Database
 from hurricane.database.assets import AssetManager
 from hurricane.dispatcher import Dispatcher
+from hurricane.eventbus import EventBus
 from hurricane.inline.base import InlineManager
 from hurricane.modloader import ModuleLoader
 from hurricane.log import TelegramLogHandler
@@ -43,14 +44,18 @@ async def main():
 
     database = Database(BASE_PATH / "database.json")
     client.hurricane_database = database
-    inline = InlineManager(client, database)
+
+    eventbus = EventBus()
+    inline = InlineManager(client, database, eventbus)
     t = database.get("core.inline", "token")
     await inline.load(t if t else await inline.obtain_token())
     
     chat = await create_log_chat(client, inline)
     logging.getLogger().addHandler(TelegramLogHandler(database, client, inline, chat))
 
-    loader = ModuleLoader(client, database, inline)
+
+
+    loader = ModuleLoader(client, database, inline, eventbus)
     await loader.load()
     client.loader = loader
 
@@ -66,7 +71,7 @@ async def main():
     )
 
     await inline.bot.send_message(chat_id=chat.id, text=load_text)
-    await loader.eventbus.publish("full_load", None)
+    await eventbus.publish("full_load", None)
 
     await idle()
     await client.stop()

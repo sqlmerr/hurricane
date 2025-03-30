@@ -96,13 +96,13 @@ class StringLoader(SourceLoader):
 
 
 class ModuleLoader:
-    def __init__(self, client: Client, db: Database, inline: InlineManager) -> None:
+    def __init__(self, client: Client, db: Database, inline: InlineManager, eventbus: EventBus) -> None:
         self._client = client
         self._db = db
         self.inline = inline
         self.modules: dict[str, Module] = {}
 
-        self.eventbus = EventBus()
+        self.eventbus = eventbus
 
     async def load(self) -> None:
         module_dir = "hurricane/modules"
