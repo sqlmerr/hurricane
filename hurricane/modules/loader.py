@@ -15,7 +15,7 @@ class Loader(hurricane.Module):
     developer = "hurricane"
     version = hurricane.__version__
 
-    async def on_load(self):
+    def __init__(self):
         self.t = TranslateAddon(
             self,
             en={

@@ -19,9 +19,7 @@ class Dispatcher:
         self.loader = loader
 
     async def _message_handler(self, app: Client, message: Message) -> None:
-        # if not await message_filters(app, message):
-        #     return
-
+        await self.loader.eventbus.publish("message", message)
         prefix = self.loader._db.get("settings", "prefix", ".")
         if not message.text or (
             message.text and not message.text.lower().strip().startswith(prefix)

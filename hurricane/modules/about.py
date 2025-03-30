@@ -1,10 +1,12 @@
 import datetime
 import time
 import hurricane
+import logging
 
 from hurricane import utils
 from hurricane.addons.command import CommandContext, simple_command, CommandAddon
 from hurricane.addons.translate import TranslateAddon
+from hurricane.addons.config import ConfigAddon, ConfigOption
 
 from pyrogram.types import Message
 
@@ -41,15 +43,23 @@ class AboutMod(hurricane.Module):
         self.c.register(
             simple_command("about", self.about, is_global=True, aliases=["info"])
         )
+        
+        self.config = ConfigAddon(
+            self,
+            ConfigOption("banner_url", str, "Url to custom banner media", "https://i.imgur.com/LdOPuTZ.jpeg")
+        )
 
     async def about(self, message: Message, context: CommandContext):
         data = {
             "version": hurricane.__version__,
             "commit": f"<a href='{hurricane.repository_url}/commit/{hurricane.commit_hex}'>{hurricane.commit_hex[:7]}</a>",
             "branch": hurricane.repo.active_branch,
-            "uptime": datetime.timedelta(seconds=round(time.time() - hurricane.init_time)),
+            "uptime": datetime.timedelta(
+                seconds=round(time.time() - hurricane.init_time)
+            ),
             "ram": utils.get_ram(),
         }
+        logging.info(self.config["banner_url"])
 
         text = self.t.txt(**data)
         await utils.respond(message, text)

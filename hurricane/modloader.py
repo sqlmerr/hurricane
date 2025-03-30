@@ -13,6 +13,7 @@ from pyrogram import Client
 from hurricane.addons.base import Addon
 from hurricane.database import Database
 from hurricane.database.assets import AssetManager
+from hurricane.eventbus import EventBus
 from hurricane.inline.base import InlineManager
 from hurricane.types import JSON
 from hurricane.utils import create_asset_chat
@@ -28,7 +29,7 @@ class Module:
     name: str
     developer: str
     version: str | None
-    dependencies: list[str] = [] # list of modules
+    dependencies: list[str] = []  # list of modules
 
     client: Client
     db: Database
@@ -65,7 +66,7 @@ class Module:
     ):
         return await create_asset_chat(
             self.client,
-            self.loader,
+            self.inline,
             title=title,
             desc=desc,
             supergroup=supergroup,
@@ -95,13 +96,13 @@ class StringLoader(SourceLoader):
 
 
 class ModuleLoader:
-    def __init__(self, client: Client, db: Database, inline: InlineManager) -> None:
+    def __init__(self, client: Client, db: Database, inline: InlineManager, eventbus: EventBus) -> None:
         self._client = client
         self._db = db
         self.inline = inline
         self.modules: dict[str, Module] = {}
-        
-        self.__internal_event_handlers: list[dict[str, Callable[[], Awaitable[None]] | str]] = []
+
+        self.eventbus = eventbus
 
     async def load(self) -> None:
         module_dir = "hurricane/modules"
@@ -116,8 +117,11 @@ class ModuleLoader:
         ):
             module_path = os.path.join(os.path.abspath("."), module_dir, module)
             module_name = module[:-3]
-
-            mod = await self.load_module(module_name, module_path)
+            
+            try:
+                await self.load_module(module_name, module_path)
+            except Exception as e:
+                logging.error(f"Error while loading module: {e}")
 
         for external_mod in filter(
             lambda p: p.endswith(".py") and p != "__init__.py", external_modules
@@ -127,7 +131,10 @@ class ModuleLoader:
             )
             module_name = external_mod[:-3]
 
-            mod = await self.load_module(module_name, module_path)
+            try:
+                await self.load_module(module_name, module_path)
+            except Exception as e:
+                logging.error(f"Error while loading external module: {e}")
 
     def load_instance(
         self, name: str, path: str = "", spec: ModuleSpec | None = None
@@ -144,7 +151,10 @@ class ModuleLoader:
                     if dep.lower() not in self.modules.keys():
                         not_installed_deps.append(dep.lower())
                 if not_installed_deps:
-                    raise ValueError(f"some dependent modules not installed: {not_installed_deps}", not_installed_deps)
+                    raise ValueError(
+                        f"some dependent modules not installed: {not_installed_deps}",
+                        not_installed_deps,
+                    )
                 value.name = value.name or name
                 value.client = self._client
                 value.db = self._db
@@ -209,12 +219,3 @@ class ModuleLoader:
             )
         )
         return fltr[0] if len(fltr) > 0 else None
-    
-    def register_internal_event(self, event: str, func: Callable[[], Awaitable[None]]): 
-        self.__internal_event_handlers.append({"event": event, "func": func})
-        
-    
-    async def send_internal_event(self, event: str):
-        for h in self.__internal_event_handlers:
-            if h.get("event") == event:
-                await h.get("func")()

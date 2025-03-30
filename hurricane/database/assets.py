@@ -14,7 +14,7 @@ class AssetManager:
     async def load(self):
         self._chat = await utils.create_asset_chat(
             self._client,
-            self._loader,
+            self._loader.inline,
             "hurricane-assets",
             "Your personal assets will be stored here!",
             archive=True,

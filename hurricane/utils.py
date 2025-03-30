@@ -2,13 +2,12 @@ import asyncio
 import random
 import string
 import os
+import hurricane
 
 from pyrogram import Client
 from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import Chat, Message, MessageEntity
 from pathlib import Path
-
-import hurricane.modloader
 
 
 async def fw_protect():
@@ -17,7 +16,7 @@ async def fw_protect():
 
 async def create_asset_chat(
     client: Client,
-    loader: "hurricane.modloader.ModuleLoader",
+    inline: "hurricane.inline.InlineManager",
     title: str,
     desc: str = "",
     supergroup: bool = False,
@@ -38,8 +37,8 @@ async def create_asset_chat(
             await chat.set_description(desc)
     else:
         users = []
-        if invite_bot and loader.inline.bot is not None:
-            users.append((await loader.inline.bot.me()).id)
+        if invite_bot and inline.bot is not None:
+            users.append((await inline.bot.me()).id)
         chat = await client.create_group(title, users)
 
         if desc:
@@ -105,9 +104,11 @@ async def respond(
     message.hurricane_respond_new_msg = msg.id
     return msg
 
+
 def get_ram() -> float:
     try:
         import psutil
+
         process = psutil.Process(os.getpid())
         mem = process.memory_info()[0] / 2.0**20
         for child in process.children(recursive=True):

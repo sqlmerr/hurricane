@@ -10,6 +10,7 @@ from hurricane.auth import Auth
 from hurricane.database import Database
 from hurricane.database.assets import AssetManager
 from hurricane.dispatcher import Dispatcher
+from hurricane.eventbus import EventBus
 from hurricane.inline.base import InlineManager
 from hurricane.modloader import ModuleLoader
 from hurricane.log import TelegramLogHandler
@@ -23,10 +24,10 @@ logger = logging.getLogger("hurricane")
 BASE_PATH = utils.get_base_path()
 
 
-async def create_log_chat(client: Client, loader: ModuleLoader) -> Chat:
+async def create_log_chat(client: Client, inline: InlineManager) -> Chat:
     return await utils.create_asset_chat(
         client,
-        loader,
+        inline,
         "hurricane-logs",
         "Your userbot logs will be sent here",
         invite_bot=True,
@@ -43,21 +44,26 @@ async def main():
 
     database = Database(BASE_PATH / "database.json")
     client.hurricane_database = database
-    inline = InlineManager(client, database)
+
+    eventbus = EventBus()
+    inline = InlineManager(client, database, eventbus)
     t = database.get("core.inline", "token")
     await inline.load(t if t else await inline.obtain_token())
+    
+    chat = await create_log_chat(client, inline)
+    logging.getLogger().addHandler(TelegramLogHandler(database, client, inline, chat))
 
-    loader = ModuleLoader(client, database, inline)
-    client.loader = loader
+
+
+    loader = ModuleLoader(client, database, inline, eventbus)
     await loader.load()
+    client.loader = loader
 
     asset_manager = AssetManager(loader, client)
     await asset_manager.load()
     dp = Dispatcher(client, loader)
     await dp.load()
 
-    chat = await create_log_chat(client, loader)
-    logging.getLogger().addHandler(TelegramLogHandler(database, client, inline, chat))
     logger.info("Hurricane userbot is loaded.")
     load_text = (
         f"🌪 <b>Hurricane userbot {hurricane.__version__} started</b>\n"
@@ -65,7 +71,7 @@ async def main():
     )
 
     await inline.bot.send_message(chat_id=chat.id, text=load_text)
-    await loader.send_internal_event("full_load")
+    await eventbus.publish("full_load", None)
 
     await idle()
     await client.stop()

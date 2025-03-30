@@ -21,6 +21,8 @@ from hurricane.addons.translate import TranslateAddon
 from hurricane.inline.custom import HurricaneCallbackQuery
 from hurricane.security.rules import In
 
+from aiogram.types import Message as BotMessage
+
 
 class TestMenu(BaseMenu):
     def __init__(self, form: FormAddon, count: int = 0):
@@ -61,13 +63,13 @@ class TestMod(hurricane.Module):
                 "ping_txt": "🏓 <b>Понг! {}</b>",
                 "restart_txt": "🔄 <b>Hurricane перезагружается...</b>",
                 "restarted": "✅ <b>Юзербот успешно перезагрузился за {} секунд</b>",
-                "loading": "✅ <b>Юзербот перезагрузился, но модули еще загружаются</b>"
+                "loading": "✅ <b>Юзербот перезагрузился, но модули еще загружаются</b>",
             },
             en={
                 "ping_txt": "🏓 <b>Pong! {}</b>",
                 "restart_txt": "🔄 <b>Hurricane is restarting...</b>",
                 "restarted": "✅ <b>Userbot successfully restarted in {} seconds</b>",
-                "loading": "✅ <b>Userbot restarted, but modules are currently loading</b>"
+                "loading": "✅ <b>Userbot restarted, but modules are currently loading</b>",
             },
         )
 
@@ -80,7 +82,23 @@ class TestMod(hurricane.Module):
         )
 
         self.form = FormAddon(self)
-        self.loader.register_internal_event("full_load", self.full_load_handler)
+        self.loader.eventbus.subscribe("full_load", self.full_load_handler)
+        self.loader.eventbus.subscribe("message", self.example_watcher)
+        self.loader.eventbus.subscribe("inline:message", self.inline_bot_command)
+
+    async def example_watcher(self, message: Message, data: dict):
+        if message.text != "testMessage":
+            return False
+        print("got testMessage!")
+
+        return True
+
+    async def inline_bot_command(self, message: BotMessage, data: dict):
+        if message.text != "/testmenu":
+            return False
+        await message.answer(f"<b>Hello, {message.from_user.first_name}!</b>")
+
+        return True
 
     async def full_load_handler(self):
         if msg_id := self.db.get("core.start", "message_id"):
@@ -126,7 +144,7 @@ class TestMod(hurricane.Module):
         self.db.set("core.start", "message_id", message.id)
         self.db.set("core.start", "chat_id", message.chat.id)
         self.db.set("core.start", "restarted_at", time.perf_counter())
-        await self.loader.send_internal_event("restart")
+        await self.loader.eventbus.publish("restart", None)
         atexit.register(restart)
 
         return sys.exit(0)
