@@ -43,10 +43,15 @@ class AboutMod(hurricane.Module):
         self.c.register(
             simple_command("about", self.about, is_global=True, aliases=["info"])
         )
-        
+
         self.config = ConfigAddon(
             self,
-            ConfigOption("banner_url", str, "Url to custom banner media", "https://i.imgur.com/LdOPuTZ.jpeg")
+            ConfigOption(
+                "banner_url",
+                str,
+                "Url to custom banner media",
+                "https://i.imgur.com/LdOPuTZ.jpeg",
+            ),
         )
 
     async def about(self, message: Message, context: CommandContext):

@@ -7,8 +7,6 @@ from pyrogram.types import Message
 
 
 class Conversation:
-    """Диалог с пользователем. Отправка сообщений и ожидание ответа"""
-
     def __init__(self, app: Client, chat_id: str | int, purge: bool = False) -> None:
         self.app = app
         self.chat_id = chat_id

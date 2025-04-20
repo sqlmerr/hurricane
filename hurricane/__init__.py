@@ -8,7 +8,7 @@ from hurricane.fsm import Conversation
 from hurricane import utils
 from hurricane import inline
 
-__version__ = "0.6.2"
+__version__ = "0.6.3"
 __authors__ = ["sqlmerr"]
 __license__ = "GPLv3"
 
