@@ -1,4 +1,5 @@
 import asyncio
+import html
 import logging
 import traceback
 
@@ -31,10 +32,10 @@ class TelegramLogHandler(logging.Handler):
                     exc = r.exc_info[1]
                     trace = traceback.format_exception(exc)
                     full_traceback = "\n".join(trace)
-                    txt = f"<b>❌ An unexpected error recieved:</b>\n<blockquote expandable>{full_traceback}</blockquote>"
+                    txt = f"<b>❌ An unexpected error recieved:</b>\n<blockquote expandable>{html.escape(full_traceback)}</blockquote>"
                     await self._inline.bot.send_message(self._chat.id, txt)
                 else:
-                    queue += f"<code>[{r.levelname}]: {r.message}</code>\n"
+                    queue += f"<code>[{r.levelname}]: {html.escape(r.message)}</code>\n"
 
             self.buffer.clear()
             if queue:

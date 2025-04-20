@@ -8,6 +8,7 @@ log = logging.getLogger(__file__)
 V = TypeVar("V")
 EventCallback = Callable[[V, dict], Awaitable[Any]] | Callable[[], Awaitable[Any]]
 
+
 @dataclasses.dataclass(frozen=True)
 class EventHandler:
     callback: EventCallback

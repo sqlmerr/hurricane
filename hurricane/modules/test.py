@@ -141,9 +141,10 @@ class TestMod(hurricane.Module):
             os.execl(sys.executable, sys.executable, "-m", "hurricane")
 
         await utils.respond(message, self.t.restart_txt())
-        self.db.set("core.start", "message_id", message.id)
-        self.db.set("core.start", "chat_id", message.chat.id)
-        self.db.set("core.start", "restarted_at", time.perf_counter())
+        if message.from_user.id == self.client.me.id:
+            self.db.set("core.start", "message_id", message.id)
+            self.db.set("core.start", "chat_id", message.chat.id)
+            self.db.set("core.start", "restarted_at", time.perf_counter())
         await self.loader.eventbus.publish("restart", None)
         atexit.register(restart)
 

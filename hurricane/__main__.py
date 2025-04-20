@@ -49,11 +49,9 @@ async def main():
     inline = InlineManager(client, database, eventbus)
     t = database.get("core.inline", "token")
     await inline.load(t if t else await inline.obtain_token())
-    
+
     chat = await create_log_chat(client, inline)
     logging.getLogger().addHandler(TelegramLogHandler(database, client, inline, chat))
-
-
 
     loader = ModuleLoader(client, database, inline, eventbus)
     await loader.load()

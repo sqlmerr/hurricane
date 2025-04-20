@@ -96,7 +96,9 @@ class StringLoader(SourceLoader):
 
 
 class ModuleLoader:
-    def __init__(self, client: Client, db: Database, inline: InlineManager, eventbus: EventBus) -> None:
+    def __init__(
+        self, client: Client, db: Database, inline: InlineManager, eventbus: EventBus
+    ) -> None:
         self._client = client
         self._db = db
         self.inline = inline
@@ -117,7 +119,7 @@ class ModuleLoader:
         ):
             module_path = os.path.join(os.path.abspath("."), module_dir, module)
             module_name = module[:-3]
-            
+
             try:
                 await self.load_module(module_name, module_path)
             except Exception as e:
@@ -176,7 +178,11 @@ class ModuleLoader:
             return None
         self.modules[instance.name.lower()] = instance
 
-        await instance.on_load()
+        try:
+            await instance.on_load()
+        except Exception as e:
+            logger.exception(e)
+            return None
 
         return instance
 
